@@ -2,6 +2,12 @@ import type { MarkdownDocument } from '../../../../shared/filesystem-entry-types
 
 export type MarkdownPreviewPresentation = 'reader' | 'diff'
 
+export type MarkdownPreviewTaskToggle = {
+  sourceLine: number
+  expectedChecked: boolean
+  checked: boolean
+}
+
 export type MarkdownPreviewProps = {
   content: string
   filePath: string
@@ -14,6 +20,7 @@ export type MarkdownPreviewProps = {
   showTableOfContents?: boolean
   onCloseTableOfContents?: () => void
   onToggleTableOfContents?: () => void
+  onTaskToggle?: (change: MarkdownPreviewTaskToggle) => void
   markdownDocuments?: MarkdownDocument[]
   onOpenDocument?: (
     document: MarkdownDocument,

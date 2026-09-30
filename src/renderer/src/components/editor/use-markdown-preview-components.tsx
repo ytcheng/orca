@@ -15,12 +15,64 @@ import {
 } from './markdown-preview-block-model'
 import { handleMarkdownPreviewLinkClick } from './markdown-preview-link-actions'
 import { isMarkdownPreviewOpenModifier } from './markdown-preview-links'
-import type { MarkdownPreviewPositionNode } from './markdown-preview-types'
+import type {
+  MarkdownPreviewPositionNode,
+  MarkdownPreviewTaskToggle
+} from './markdown-preview-types'
 import type { MarkdownPreviewAnnotationRenderers } from './use-markdown-preview-annotation-renderers'
 import type { MarkdownPreviewFoundation } from './use-markdown-preview-foundation'
 import type { MarkdownPreviewReviewActions } from './use-markdown-preview-review-actions'
 import type { MarkdownPreviewViewport } from './use-markdown-preview-viewport'
 import { useLocalImageSrc } from './useLocalImageSrc'
+
+type MarkdownTaskLineContextValue = {
+  sourceLine?: number
+  onTaskToggle?: (change: MarkdownPreviewTaskToggle) => void
+}
+
+const MarkdownTaskLineContext = React.createContext<MarkdownTaskLineContextValue>({})
+
+function MarkdownTaskLineProvider({
+  sourceLine,
+  onTaskToggle,
+  children
+}: MarkdownTaskLineContextValue & { children: React.ReactNode }): React.JSX.Element {
+  const value = React.useMemo(() => ({ sourceLine, onTaskToggle }), [onTaskToggle, sourceLine])
+  return (
+    <MarkdownTaskLineContext.Provider value={value}>{children}</MarkdownTaskLineContext.Provider>
+  )
+}
+
+function MarkdownTaskInput({
+  node,
+  type,
+  checked,
+  ...props
+}: React.ComponentProps<'input'> & { node?: MarkdownPreviewPositionNode }): React.JSX.Element {
+  const taskLine = React.useContext(MarkdownTaskLineContext)
+  const sourceLine = node?.position?.start?.line ?? taskLine.sourceLine
+  const canToggleTask =
+    type === 'checkbox' && sourceLine !== undefined && taskLine.onTaskToggle !== undefined
+
+  return (
+    <input
+      {...props}
+      type={type}
+      checked={checked}
+      disabled={!canToggleTask}
+      onChange={(event) => {
+        if (!canToggleTask || sourceLine === undefined || !taskLine.onTaskToggle) {
+          return
+        }
+        taskLine.onTaskToggle({
+          sourceLine,
+          expectedChecked: checked === true,
+          checked: event.currentTarget.checked
+        })
+      }}
+    />
+  )
+}
 
 export function useMarkdownPreviewComponents({
   foundation,
@@ -28,7 +80,8 @@ export function useMarkdownPreviewComponents({
   reviewActions,
   annotationRenderers,
   filePath,
-  onOpenDocument
+  onOpenDocument,
+  onTaskToggle
 }: {
   foundation: MarkdownPreviewFoundation
   viewport: MarkdownPreviewViewport
@@ -39,6 +92,7 @@ export function useMarkdownPreviewComponents({
     document: MarkdownDocument,
     options?: { anchor?: string | null }
   ) => void | Promise<void>
+  onTaskToggle?: (change: MarkdownPreviewTaskToggle) => void
 }): Components {
   const {
     markdownDocumentIndex,
@@ -165,6 +219,7 @@ export function useMarkdownPreviewComponents({
           </code>
         )
       },
+      input: (props) => <MarkdownTaskInput {...props} />,
       pre: ({ node, children, ...props }) => {
         const child = React.Children.toArray(children)[0]
         if (React.isValidElement(child) && child.type === MermaidBlock) {
@@ -192,11 +247,16 @@ export function useMarkdownPreviewComponents({
         ),
       li: ({ node, children, ...props }) => {
         const positionNode = node as MarkdownPreviewPositionNode
+        const sourceLine = positionNode.position?.start?.line
         const range = hasMarkdownPreviewNestedBlock(positionNode)
           ? null
           : getMarkdownPreviewBlockRange(positionNode)
         if (!range) {
-          return <li {...props}>{children}</li>
+          return (
+            <MarkdownTaskLineProvider sourceLine={sourceLine} onTaskToggle={onTaskToggle}>
+              <li {...props}>{children}</li>
+            </MarkdownTaskLineProvider>
+          )
         }
         const blockKey = `li:${range.startLine}-${range.endLine}`
         const hasReviewNotes = getMarkdownCommentsForRange(range).length > 0
@@ -206,20 +266,22 @@ export function useMarkdownPreviewComponents({
           getMarkdownPreviewAnnotationQuote(children)
         )
         return (
-          <li {...props}>
-            <div
-              className={`markdown-annotation-list-block ${
-                hasReviewNotes ? 'has-review-notes' : ''
-              }`.trim()}
-              data-source-line={range.startLine}
-              data-source-end-line={range.endLine}
-              data-annotation-block-key={controls ? blockKey : undefined}
-              onClick={(event) => handleAnnotatedMarkdownBlockClick(range, event)}
-            >
-              <span className="markdown-annotation-list-content">{children}</span>
-              {controls}
-            </div>
-          </li>
+          <MarkdownTaskLineProvider sourceLine={sourceLine} onTaskToggle={onTaskToggle}>
+            <li {...props}>
+              <div
+                className={`markdown-annotation-list-block ${
+                  hasReviewNotes ? 'has-review-notes' : ''
+                }`.trim()}
+                data-source-line={range.startLine}
+                data-source-end-line={range.endLine}
+                data-annotation-block-key={controls ? blockKey : undefined}
+                onClick={(event) => handleAnnotatedMarkdownBlockClick(range, event)}
+              >
+                <span className="markdown-annotation-list-content">{children}</span>
+                {controls}
+              </div>
+            </li>
+          </MarkdownTaskLineProvider>
         )
       },
       h1: ({ node, children, ...props }) =>
@@ -282,6 +344,7 @@ export function useMarkdownPreviewComponents({
     handleAnnotatedMarkdownBlockClick,
     markdownDocumentIndex,
     onOpenDocument,
+    onTaskToggle,
     openFile,
     openMarkdownPreview,
     renderAnnotationControls,

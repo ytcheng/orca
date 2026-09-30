@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import { translate } from '@/i18n/i18n'
 import { useAppStore } from '@/store'
 import type { MarkdownViewMode, OpenFile } from '@/store/slices/editor'
@@ -7,6 +8,8 @@ import { formatBytes } from '../status-bar/workspace-space-format'
 import { MarkdownPreview, RichMarkdownEditor } from './editor-lazy-views'
 import { extractFrontMatter, prependFrontMatter } from './markdown-frontmatter'
 import type { MarkdownRenderState } from './markdown-render-mode'
+import type { MarkdownPreviewTaskToggle } from './markdown-preview-types'
+import { setMarkdownTaskCheckedAtLine } from './markdown-task-toggle'
 import { RichMarkdownErrorBoundary } from './RichMarkdownErrorBoundary'
 import type { useMarkdownDocuments } from './useMarkdownDocuments'
 
@@ -48,6 +51,20 @@ export function EditorMarkdownFileSurface({
   monacoEditor: React.JSX.Element
 }): React.JSX.Element {
   const setSizeOverride = useAppStore((s) => s.setMarkdownRichModeSizeOverride)
+  const handleTaskToggle = useCallback(
+    ({ sourceLine, expectedChecked, checked }: MarkdownPreviewTaskToggle): void => {
+      const nextContent = setMarkdownTaskCheckedAtLine(
+        currentContent,
+        sourceLine,
+        expectedChecked,
+        checked
+      )
+      if (nextContent !== null) {
+        handleContentChange(nextContent)
+      }
+    },
+    [currentContent, handleContentChange]
+  )
 
   if (activeFile.conflict?.conflictStatus === 'unresolved') {
     return <div className="h-full min-h-0">{monacoEditor}</div>
@@ -159,6 +176,7 @@ export function EditorMarkdownFileSurface({
             showTableOfContents={showMarkdownTableOfContents}
             onCloseTableOfContents={onCloseMarkdownTableOfContents}
             onToggleTableOfContents={onToggleMarkdownTableOfContents}
+            onTaskToggle={handleTaskToggle}
             markdownAnnotationsEnabled={markdownAnnotationsEnabled}
             {...markdownDocuments.previewProps}
           />

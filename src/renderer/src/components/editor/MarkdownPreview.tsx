@@ -34,6 +34,7 @@ export default function MarkdownPreview({
   showTableOfContents = false,
   onCloseTableOfContents,
   onToggleTableOfContents,
+  onTaskToggle,
   markdownDocuments = EMPTY_MARKDOWN_DOCUMENTS,
   onOpenDocument,
   markdownAnnotationsEnabled = false
@@ -69,7 +70,8 @@ export default function MarkdownPreview({
     reviewActions,
     annotationRenderers,
     filePath,
-    onOpenDocument
+    onOpenDocument,
+    onTaskToggle: presentation === 'reader' ? onTaskToggle : undefined
   })
 
   return (
