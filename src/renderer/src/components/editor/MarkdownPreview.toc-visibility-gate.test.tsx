@@ -133,9 +133,11 @@ describe('MarkdownPreview TOC visibility gate', () => {
   it('routes Reader and diff through separate surface variants', () => {
     render(false, 'reader')
     expect(container.querySelector('.markdown-reader-surface')).not.toBeNull()
+    expect(container.querySelector('.markdown-reader-toolbar')).not.toBeNull()
 
     render(false, 'diff')
     expect(container.querySelector('.markdown-reader-surface')).toBeNull()
+    expect(container.querySelector('.markdown-reader-toolbar')).toBeNull()
     expect(container.querySelector('.markdown-preview')).not.toBeNull()
   })
 

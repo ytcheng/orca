@@ -13118,6 +13118,12 @@
           "aff15f94f5": "Editor enriquecido",
           "4d6ccb7ba6": "Código fuente"
         },
+        "MarkdownReaderToolbar": {
+          "hideToc": "Ocultar índice",
+          "showToc": "Mostrar índice",
+          "find": "Buscar en el documento",
+          "label": "Controles del lector Markdown"
+        },
         "ImageDiffViewer": {
           "a651be62b0": "Modificado",
           "57aac3979a": "Original",

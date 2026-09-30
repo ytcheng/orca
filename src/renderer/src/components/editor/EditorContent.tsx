@@ -16,6 +16,7 @@ import { useMarkdownDocuments } from './useMarkdownDocuments'
 import type { MarkdownRenderState } from './markdown-render-mode'
 
 const noopCloseMarkdownTableOfContents = (): void => {}
+const noopToggleMarkdownTableOfContents = (): void => {}
 
 export function getMarkdownSourceLineOffset(frontMatterRaw: string): number {
   let offset = 0
@@ -55,6 +56,7 @@ export function EditorContent({
   showMarkdownTableOfContents = false,
   showMarkdownFrontmatter = false,
   onCloseMarkdownTableOfContents = noopCloseMarkdownTableOfContents,
+  onToggleMarkdownTableOfContents = noopToggleMarkdownTableOfContents,
   markdownAnnotationsEnabled = true,
   pendingEditorReveal,
   handleContentChange,
@@ -83,6 +85,7 @@ export function EditorContent({
   showMarkdownTableOfContents?: boolean
   showMarkdownFrontmatter?: boolean
   onCloseMarkdownTableOfContents?: () => void
+  onToggleMarkdownTableOfContents?: () => void
   markdownAnnotationsEnabled?: boolean
   pendingEditorReveal: PendingEditorReveal | null
   handleContentChange: (content: string) => void
@@ -222,6 +225,7 @@ export function EditorContent({
           initialAnchor={activeFile.markdownPreviewAnchor ?? null}
           showTableOfContents={showMarkdownTableOfContents}
           onCloseTableOfContents={onCloseMarkdownTableOfContents}
+          onToggleTableOfContents={onToggleMarkdownTableOfContents}
           markdownAnnotationsEnabled={markdownAnnotationsEnabled}
           {...markdownDocuments.previewProps}
         />
@@ -254,6 +258,7 @@ export function EditorContent({
         showMarkdownTableOfContents={showMarkdownTableOfContents}
         showMarkdownFrontmatter={showMarkdownFrontmatter}
         onCloseMarkdownTableOfContents={onCloseMarkdownTableOfContents}
+        onToggleMarkdownTableOfContents={onToggleMarkdownTableOfContents}
         markdownAnnotationsEnabled={markdownAnnotationsEnabled}
         pendingEditorReveal={pendingEditorReveal}
         markdownDocuments={markdownDocuments}

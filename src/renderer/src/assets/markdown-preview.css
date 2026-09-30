@@ -18,6 +18,63 @@
   container-type: inline-size;
 }
 
+.markdown-reader-surface {
+  background: var(--editor-surface);
+  color: var(--foreground);
+}
+
+.markdown-reader-main {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+.markdown-reader-toolbar {
+  display: flex;
+  min-height: 36px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--editor-surface) 92%, var(--background));
+  padding-inline: 10px;
+}
+
+.markdown-reader-scroll {
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+.markdown-reader-scroll:focus-visible {
+  outline: none;
+}
+
+.markdown-reader-article {
+  box-sizing: border-box;
+  width: min(100%, 900px);
+  min-width: 0;
+  margin-inline: auto;
+  padding: 32px 48px 64px;
+}
+
+@container (max-width: 760px) {
+  .markdown-reader-article {
+    padding-inline: 28px;
+  }
+}
+
+@container (max-width: 560px) {
+  .markdown-reader-article {
+    padding-inline: 16px;
+  }
+}
+
 .markdown-preview:focus-visible {
   outline: none;
 }

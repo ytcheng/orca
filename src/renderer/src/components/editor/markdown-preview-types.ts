@@ -13,6 +13,7 @@ export type MarkdownPreviewProps = {
   initialAnchor?: string | null
   showTableOfContents?: boolean
   onCloseTableOfContents?: () => void
+  onToggleTableOfContents?: () => void
   markdownDocuments?: MarkdownDocument[]
   onOpenDocument?: (
     document: MarkdownDocument,

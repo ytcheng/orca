@@ -14945,6 +14945,12 @@
           "aff15f94f5": "리치 에디터",
           "4d6ccb7ba6": "소스"
         },
+        "MarkdownReaderToolbar": {
+          "hideToc": "목차 숨기기",
+          "showToc": "목차 표시",
+          "find": "문서에서 찾기",
+          "label": "Markdown 읽기 컨트롤"
+        },
         "ImageDiffViewer": {
           "a651be62b0": "수정됨",
           "57aac3979a": "원본",

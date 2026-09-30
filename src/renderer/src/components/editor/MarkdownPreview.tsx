@@ -33,6 +33,7 @@ export default function MarkdownPreview({
   initialAnchor = null,
   showTableOfContents = false,
   onCloseTableOfContents,
+  onToggleTableOfContents,
   markdownDocuments = EMPTY_MARKDOWN_DOCUMENTS,
   onOpenDocument,
   markdownAnnotationsEnabled = false
@@ -81,6 +82,7 @@ export default function MarkdownPreview({
       presentation={presentation}
       showTableOfContents={showTableOfContents}
       onCloseTableOfContents={onCloseTableOfContents}
+      onToggleTableOfContents={onToggleTableOfContents}
     />
   )
 }

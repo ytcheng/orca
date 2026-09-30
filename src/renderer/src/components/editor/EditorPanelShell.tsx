@@ -152,6 +152,7 @@ export function EditorPanelShell({
           inlineMarkdownRenderState={model.inlineMarkdownRenderState}
           isChangesMode={model.isDiffSurface && !model.isSingleDiff}
           sideBySide={sideBySide}
+          onToggleMarkdownTableOfContents={onToggleMarkdownTableOfContents}
           pendingEditorReveal={pendingEditorReveal}
           handleContentChange={onContentChange}
           handleContentChangeForFile={onContentChangeForFile}

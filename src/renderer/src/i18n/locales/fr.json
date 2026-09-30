@@ -15048,6 +15048,12 @@
           "aff15f94f5": "Éditeur enrichi",
           "4d6ccb7ba6": "Source"
         },
+        "MarkdownReaderToolbar": {
+          "hideToc": "Masquer la table des matières",
+          "showToc": "Afficher la table des matières",
+          "find": "Rechercher dans le document",
+          "label": "Commandes du lecteur Markdown"
+        },
         "ImageDiffViewer": {
           "a651be62b0": "Modifié",
           "57aac3979a": "Original",

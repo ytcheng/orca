@@ -14945,6 +14945,12 @@
           "aff15f94f5": "富文本编辑器",
           "4d6ccb7ba6": "源码"
         },
+        "MarkdownReaderToolbar": {
+          "hideToc": "隐藏目录",
+          "showToc": "显示目录",
+          "find": "在文档中查找",
+          "label": "Markdown 阅读器工具"
+        },
         "ImageDiffViewer": {
           "a651be62b0": "修改的",
           "57aac3979a": "原来的",

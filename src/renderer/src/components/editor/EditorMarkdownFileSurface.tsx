@@ -22,6 +22,7 @@ export function EditorMarkdownFileSurface({
   showMarkdownTableOfContents,
   showMarkdownFrontmatter,
   onCloseMarkdownTableOfContents,
+  onToggleMarkdownTableOfContents,
   markdownAnnotationsEnabled,
   markdownDocuments,
   getMarkdownSourceLineOffset,
@@ -38,6 +39,7 @@ export function EditorMarkdownFileSurface({
   showMarkdownTableOfContents: boolean
   showMarkdownFrontmatter: boolean
   onCloseMarkdownTableOfContents: () => void
+  onToggleMarkdownTableOfContents: () => void
   markdownAnnotationsEnabled: boolean
   markdownDocuments: MarkdownDocumentsController
   getMarkdownSourceLineOffset: (frontMatterRaw: string) => number
@@ -156,6 +158,7 @@ export function EditorMarkdownFileSurface({
             scrollCacheKey={`${editorViewStateKey}:preview`}
             showTableOfContents={showMarkdownTableOfContents}
             onCloseTableOfContents={onCloseMarkdownTableOfContents}
+            onToggleTableOfContents={onToggleMarkdownTableOfContents}
             markdownAnnotationsEnabled={markdownAnnotationsEnabled}
             {...markdownDocuments.previewProps}
           />

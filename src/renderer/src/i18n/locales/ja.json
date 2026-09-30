@@ -14945,6 +14945,12 @@
           "aff15f94f5": "リッチエディター",
           "4d6ccb7ba6": "ソース"
         },
+        "MarkdownReaderToolbar": {
+          "hideToc": "目次を非表示",
+          "showToc": "目次を表示",
+          "find": "ドキュメント内を検索",
+          "label": "Markdown 閲覧コントロール"
+        },
         "ImageDiffViewer": {
           "a651be62b0": "修正済み",
           "57aac3979a": "オリジナル",

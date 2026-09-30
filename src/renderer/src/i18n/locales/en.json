@@ -15112,6 +15112,12 @@
           "aff15f94f5": "Rich Editor",
           "4d6ccb7ba6": "Source"
         },
+        "MarkdownReaderToolbar": {
+          "hideToc": "Hide table of contents",
+          "showToc": "Show table of contents",
+          "find": "Find in document",
+          "label": "Markdown reader controls"
+        },
         "ImageDiffViewer": {
           "a651be62b0": "Modified",
           "57aac3979a": "Original",

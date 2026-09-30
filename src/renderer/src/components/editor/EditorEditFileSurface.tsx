@@ -22,6 +22,7 @@ import type { MarkdownRenderState } from './markdown-render-mode'
 
 const noopEditorContentChange = (_content: string): void => {}
 const noopEditorSave = async (_content: string): Promise<boolean> => false
+const noopMarkdownTableOfContentsToggle = (): void => {}
 
 type MarkdownDocumentsController = ReturnType<typeof useMarkdownDocuments>
 
@@ -48,6 +49,7 @@ export function EditorEditFileSurface({
   showMarkdownTableOfContents,
   showMarkdownFrontmatter,
   onCloseMarkdownTableOfContents,
+  onToggleMarkdownTableOfContents = noopMarkdownTableOfContentsToggle,
   markdownAnnotationsEnabled,
   pendingEditorReveal,
   markdownDocuments,
@@ -80,6 +82,7 @@ export function EditorEditFileSurface({
   showMarkdownTableOfContents: boolean
   showMarkdownFrontmatter: boolean
   onCloseMarkdownTableOfContents: () => void
+  onToggleMarkdownTableOfContents?: () => void
   markdownAnnotationsEnabled: boolean
   pendingEditorReveal: PendingEditorReveal | null
   markdownDocuments: MarkdownDocumentsController
@@ -233,6 +236,7 @@ export function EditorEditFileSurface({
       showMarkdownTableOfContents={showMarkdownTableOfContents}
       showMarkdownFrontmatter={showMarkdownFrontmatter}
       onCloseMarkdownTableOfContents={onCloseMarkdownTableOfContents}
+      onToggleMarkdownTableOfContents={onToggleMarkdownTableOfContents}
       markdownAnnotationsEnabled={markdownAnnotationsEnabled}
       markdownDocuments={markdownDocuments}
       getMarkdownSourceLineOffset={getMarkdownSourceLineOffset}
