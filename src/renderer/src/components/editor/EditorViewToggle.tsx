@@ -41,7 +41,7 @@ const DEFAULT_VIEW_MODE_METADATA: Record<EditorToggleValue, ViewModeMetadata> = 
   },
   preview: {
     get label() {
-      return translate('auto.components.editor.EditorViewToggle.0d193dc03c', 'Preview')
+      return translate('auto.components.editor.EditorViewToggle.0d193dc03c', 'Reader')
     },
     icon: Eye
   },

@@ -147,6 +147,14 @@ describe('getEditorPanelRenderModel read-only raw rendering (AI Vault View Log)'
     const model = renderModel({ activeFile: markdownFile() })
     expect(model.isMarkdown).toBe(true)
     expect(model.hasViewModeToggle).toBe(true)
+    expect(model.mdViewMode).toBe('preview')
+  })
+
+  it('keeps an explicitly selected Markdown view mode', () => {
+    expect(renderModel({ markdownViewMode: { '/repo/README.md': 'rich' } }).mdViewMode).toBe('rich')
+    expect(renderModel({ markdownViewMode: { '/repo/README.md': 'source' } }).mdViewMode).toBe(
+      'source'
+    )
   })
 })
 
