@@ -76,6 +76,7 @@
 }
 
 .markdown-reader-diagram {
+  display: block;
   max-width: 100%;
   margin: 1em 0;
   overflow-x: auto;
@@ -97,6 +98,69 @@
   margin-bottom: 0.5em;
   color: var(--destructive);
   font-size: 0.85em;
+}
+
+.markdown-reader-media-trigger {
+  display: inline-flex;
+  max-width: 100%;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  vertical-align: baseline;
+  cursor: zoom-in;
+}
+
+.markdown-reader-media-trigger img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.markdown-reader-media-surface {
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  overflow: auto;
+  background: var(--editor-surface);
+}
+
+.markdown-reader-media-canvas {
+  box-sizing: border-box;
+  display: flex;
+  width: max-content;
+  min-width: 100%;
+  height: max-content;
+  min-height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.markdown-reader-media-layout {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+}
+
+.markdown-reader-media-image,
+.markdown-reader-media-svg svg {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 80vw;
+  max-height: 75vh;
+  object-fit: contain;
+}
+
+.markdown-reader-media-image.is-sized,
+.markdown-reader-media-svg.is-sized,
+.markdown-reader-media-svg.is-sized svg {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
 }
 
 .markdown-preview:focus-visible {

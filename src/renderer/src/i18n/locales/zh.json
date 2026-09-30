@@ -14951,6 +14951,15 @@
           "find": "在文档中查找",
           "label": "Markdown 阅读器工具"
         },
+        "MarkdownReaderMediaViewer": {
+          "openImage": "放大图片",
+          "openDiagram": "放大图表",
+          "close": "关闭",
+          "zoomIn": "放大",
+          "zoomOut": "缩小",
+          "resetZoom": "重置缩放",
+          "description": "使用缩放控件调整大小，并滚动平移。"
+        },
         "ImageDiffViewer": {
           "a651be62b0": "修改的",
           "57aac3979a": "原来的",

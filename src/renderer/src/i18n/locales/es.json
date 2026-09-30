@@ -13124,6 +13124,15 @@
           "find": "Buscar en el documento",
           "label": "Controles del lector Markdown"
         },
+        "MarkdownReaderMediaViewer": {
+          "openImage": "Abrir imagen",
+          "openDiagram": "Abrir diagrama",
+          "close": "Cerrar",
+          "zoomIn": "Ampliar",
+          "zoomOut": "Reducir",
+          "resetZoom": "Restablecer zoom",
+          "description": "Usa los controles de zoom para cambiar el tamaño y desplázate para mover la vista."
+        },
         "ImageDiffViewer": {
           "a651be62b0": "Modificado",
           "57aac3979a": "Original",

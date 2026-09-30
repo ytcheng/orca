@@ -14951,6 +14951,15 @@
           "find": "ドキュメント内を検索",
           "label": "Markdown 閲覧コントロール"
         },
+        "MarkdownReaderMediaViewer": {
+          "openImage": "画像を拡大",
+          "openDiagram": "図を拡大",
+          "close": "閉じる",
+          "zoomIn": "拡大",
+          "zoomOut": "縮小",
+          "resetZoom": "ズームをリセット",
+          "description": "ズーム操作でサイズを調整し、スクロールして移動できます。"
+        },
         "ImageDiffViewer": {
           "a651be62b0": "修正済み",
           "57aac3979a": "オリジナル",

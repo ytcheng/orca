@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import DOMPurify from 'dompurify'
 import { translate } from '@/i18n/i18n'
+import { MarkdownReaderMediaViewer } from './MarkdownReaderMediaViewer'
 import {
   renderMarkdownDiagram,
   type MarkdownReaderDiagramKind
@@ -98,15 +99,20 @@ export function MarkdownReaderDiagramBlock({
   }
 
   return (
-    <div
-      className="markdown-reader-diagram"
-      role="img"
-      aria-label={translate(
+    <MarkdownReaderMediaViewer
+      src={state.svg}
+      alt={translate(
         'auto.components.editor.MarkdownReaderDiagramBlock.imageLabel',
         'Rendered diagram'
       )}
-      dangerouslySetInnerHTML={{ __html: state.svg }}
-    />
+      kind="diagram"
+    >
+      <span
+        className="markdown-reader-diagram"
+        aria-hidden="true"
+        dangerouslySetInnerHTML={{ __html: state.svg }}
+      />
+    </MarkdownReaderMediaViewer>
   )
 }
 

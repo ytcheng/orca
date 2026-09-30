@@ -15118,6 +15118,15 @@
           "find": "Find in document",
           "label": "Markdown reader controls"
         },
+        "MarkdownReaderMediaViewer": {
+          "openImage": "Open image",
+          "openDiagram": "Open diagram",
+          "close": "Close",
+          "zoomIn": "Zoom in",
+          "zoomOut": "Zoom out",
+          "resetZoom": "Reset zoom",
+          "description": "Use the zoom controls to resize the media and scroll to pan."
+        },
         "ImageDiffViewer": {
           "a651be62b0": "Modified",
           "57aac3979a": "Original",

@@ -75,7 +75,11 @@ vi.mock('@/i18n/i18n', () => ({
   i18n: { language: 'en' },
   translate: (_key: string, fallback: string) => fallback
 }))
-vi.mock('./useLocalImageSrc', () => ({ useLocalImageSrc: (src?: string) => src }))
+vi.mock('./useLocalImageSrc', () => ({
+  useLocalImageSrc: (src?: string) => src,
+  getLocalImageCacheKey: () => 'image-cache-key',
+  loadLocalImageAbsolutePath: vi.fn(async () => null)
+}))
 vi.mock('./MermaidBlock', () => ({ default: () => null }))
 vi.mock('./CodeBlockCopyButton', () => ({
   default: ({ children }: { children: React.ReactNode }) => children
@@ -159,7 +163,7 @@ describe('MarkdownPreview http link routing (Cmd vs Cmd+Shift click)', () => {
     return anchor
   }
 
-  function click(anchor: HTMLAnchorElement, modifiers: Partial<MouseEventInit>): void {
+  function click(anchor: HTMLElement, modifiers: Partial<MouseEventInit>): void {
     act(() => {
       anchor.dispatchEvent(
         new window.MouseEvent('click', { bubbles: true, cancelable: true, ...modifiers })
@@ -181,6 +185,21 @@ describe('MarkdownPreview http link routing (Cmd vs Cmd+Shift click)', () => {
     click(anchor, { metaKey: true, shiftKey: true })
     expect(openUrlMock).toHaveBeenCalledWith('https://example.com/')
     expect(createBrowserTabMock).not.toHaveBeenCalled()
+  })
+
+  it('keeps linked images inside the existing link route without a media zoom trigger', () => {
+    const anchor = render('[![diagram](diagram.svg)](https://example.com)', 'https://example.com')
+    const image = anchor.querySelector<HTMLImageElement>('img')
+    if (!image) {
+      throw new Error('expected the linked image to render')
+    }
+
+    expect(anchor.querySelector('button[aria-label="Open image"]')).toBeNull()
+    expect(document.querySelector('[role="dialog"]')).toBeNull()
+    click(image, {})
+    expect(createBrowserTabMock).toHaveBeenCalledWith('wt-1', 'https://example.com/', {
+      activate: true
+    })
   })
 
   it('keeps system-browser HTTP and file links inert while ownership is unknown', () => {

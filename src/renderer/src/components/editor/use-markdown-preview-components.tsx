@@ -16,12 +16,16 @@ import {
 import { handleMarkdownPreviewLinkClick } from './markdown-preview-link-actions'
 import { isMarkdownPreviewOpenModifier } from './markdown-preview-links'
 import { MarkdownReaderDiagramBlock } from './MarkdownReaderDiagramBlock'
+import { MarkdownReaderMediaViewer } from './MarkdownReaderMediaViewer'
 import type {
   MarkdownPreviewPresentation,
   MarkdownPreviewPositionNode,
   MarkdownPreviewTaskToggle
 } from './markdown-preview-types'
-import type { MarkdownReaderDiagramKind } from './markdown-reader-diagram-renderers'
+import {
+  getMarkdownReaderCodeText,
+  getMarkdownReaderDiagramKind
+} from './markdown-reader-code-fence'
 import type { MarkdownPreviewAnnotationRenderers } from './use-markdown-preview-annotation-renderers'
 import type { MarkdownPreviewFoundation } from './use-markdown-preview-foundation'
 import type { MarkdownPreviewReviewActions } from './use-markdown-preview-review-actions'
@@ -34,35 +38,7 @@ type MarkdownTaskLineContextValue = {
 }
 
 const MarkdownTaskLineContext = React.createContext<MarkdownTaskLineContextValue>({})
-
-function getReaderDiagramKind(
-  className: string | undefined,
-  presentation: MarkdownPreviewPresentation
-): MarkdownReaderDiagramKind | null {
-  if (presentation !== 'reader') {
-    return null
-  }
-  const language = className?.match(/(?:^|\s)language-(plantuml|puml|dot|graphviz)(?:\s|$)/i)?.[1]
-  if (language === 'plantuml' || language === 'puml') {
-    return 'plantuml'
-  }
-  if (language === 'dot' || language === 'graphviz') {
-    return 'graphviz'
-  }
-  return null
-}
-
-function getCodeText(children: React.ReactNode): string {
-  let text = ''
-  React.Children.forEach(children, (child) => {
-    if (typeof child === 'string' || typeof child === 'number') {
-      text += child
-    } else if (React.isValidElement<{ children?: React.ReactNode }>(child)) {
-      text += getCodeText(child.props.children)
-    }
-  })
-  return text
-}
+const MarkdownLinkChildContext = React.createContext(false)
 
 function MarkdownTaskLineProvider({
   sourceLine,
@@ -198,7 +174,9 @@ export function useMarkdownPreviewComponents({
               title={resolvedDocument ? undefined : title}
               onClick={handleDocLinkClick}
             >
-              {children}
+              <MarkdownLinkChildContext.Provider value>
+                {children}
+              </MarkdownLinkChildContext.Provider>
             </a>
           )
         }
@@ -213,11 +191,12 @@ export function useMarkdownPreviewComponents({
             }
             style={{ cursor: 'pointer' }}
           >
-            {children}
+            <MarkdownLinkChildContext.Provider value>{children}</MarkdownLinkChildContext.Provider>
           </a>
         )
       },
       img: function MarkdownImg({ src, alt, ...props }) {
+        const isLinkedImage = React.useContext(MarkdownLinkChildContext)
         const resolvedSrc = useLocalImageSrc(src, filePath, undefined, imageRuntimeContext)
         const handleImageClick = (event: React.MouseEvent<HTMLImageElement>): void => {
           if (!isMarkdownPreviewOpenModifier(event, isMac)) {
@@ -239,7 +218,23 @@ export function useMarkdownPreviewComponents({
           })
         }
 
-        return <img {...props} src={resolvedSrc} alt={alt ?? ''} onClick={handleImageClick} />
+        const image = (
+          <img {...props} src={resolvedSrc} alt={alt ?? ''} onClick={handleImageClick} />
+        )
+        if (presentation !== 'reader' || !resolvedSrc) {
+          return image
+        }
+        return (
+          <MarkdownReaderMediaViewer
+            src={resolvedSrc}
+            alt={alt ?? ''}
+            kind="image"
+            isLinked={isLinkedImage}
+            onImageClick={handleImageClick}
+          >
+            {image}
+          </MarkdownReaderMediaViewer>
+        )
       },
       code: ({ className, children, ...props }) => {
         if (/language-mermaid/.test(className || '')) {
@@ -247,12 +242,12 @@ export function useMarkdownPreviewComponents({
             <MermaidBlock content={String(children).trimEnd()} isDark={isDark} htmlLabels={false} />
           )
         }
-        const diagramKind = getReaderDiagramKind(className, presentation)
+        const diagramKind = getMarkdownReaderDiagramKind(className, presentation)
         if (diagramKind) {
           return (
             <MarkdownReaderDiagramBlock
               kind={diagramKind}
-              source={getCodeText(children).replace(/\n$/, '')}
+              source={getMarkdownReaderCodeText(children).replace(/\n$/, '')}
               isDark={isDark}
             />
           )

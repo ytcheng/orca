@@ -14951,6 +14951,15 @@
           "find": "문서에서 찾기",
           "label": "Markdown 읽기 컨트롤"
         },
+        "MarkdownReaderMediaViewer": {
+          "openImage": "이미지 확대",
+          "openDiagram": "다이어그램 확대",
+          "close": "닫기",
+          "zoomIn": "확대",
+          "zoomOut": "축소",
+          "resetZoom": "확대/축소 초기화",
+          "description": "확대/축소 컨트롤로 크기를 조절하고 스크롤하여 이동하세요."
+        },
         "ImageDiffViewer": {
           "a651be62b0": "수정됨",
           "57aac3979a": "원본",
