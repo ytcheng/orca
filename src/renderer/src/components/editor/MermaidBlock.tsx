@@ -22,6 +22,7 @@ type MermaidBlockProps = {
   content: string
   isDark: boolean
   htmlLabels?: boolean
+  onRenderedSvgChange?: (svg: string | null) => void
 }
 
 // Why: mermaid.render() manipulates global DOM state (element IDs, internal
@@ -50,7 +51,8 @@ function enqueueRender(fn: () => Promise<void>): void {
 export default function MermaidBlock({
   content,
   isDark,
-  htmlLabels = false
+  htmlLabels = false,
+  onRenderedSvgChange
 }: MermaidBlockProps): React.JSX.Element {
   const id = useId().replace(/:/g, '_')
   const containerRef = useRef<HTMLDivElement>(null)
@@ -58,6 +60,7 @@ export default function MermaidBlock({
 
   useEffect(() => {
     let cancelled = false
+    onRenderedSvgChange?.(null)
 
     const render = async (): Promise<void> => {
       try {
@@ -76,14 +79,17 @@ export default function MermaidBlock({
           // Why: although mermaid uses DOMPurify internally, we add an explicit
           // sanitization pass as defense-in-depth against XSS in case upstream
           // behaviour changes or a mermaid version ships without sanitization.
-          containerRef.current.innerHTML = DOMPurify.sanitize(svg, {
+          const sanitizedSvg = DOMPurify.sanitize(svg, {
             USE_PROFILES: { svg: true }
           })
+          containerRef.current.innerHTML = sanitizedSvg
           setError(null)
+          onRenderedSvgChange?.(sanitizedSvg)
         }
       } catch (err) {
         if (!cancelled) {
           setError(err instanceof Error ? err.message : 'Invalid mermaid syntax')
+          onRenderedSvgChange?.(null)
           // Mermaid leaves an error element in the DOM on failure — clean it up.
           const errorEl = document.getElementById(`d${`mermaid-${id}`}`)
           errorEl?.remove()
@@ -97,7 +103,7 @@ export default function MermaidBlock({
     return () => {
       cancelled = true
     }
-  }, [content, htmlLabels, isDark, id])
+  }, [content, htmlLabels, isDark, id, onRenderedSvgChange])
 
   if (error) {
     return (

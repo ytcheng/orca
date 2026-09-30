@@ -52,10 +52,16 @@ export function EditorMarkdownFileSurface({
 }): React.JSX.Element {
   const setSizeOverride = useAppStore((s) => s.setMarkdownRichModeSizeOverride)
   const handleTaskToggle = useCallback(
-    ({ sourceLine, expectedChecked, checked }: MarkdownPreviewTaskToggle): void => {
+    ({
+      sourceLine,
+      expectedSourceLine,
+      expectedChecked,
+      checked
+    }: MarkdownPreviewTaskToggle): void => {
       const nextContent = setMarkdownTaskCheckedAtLine(
         currentContent,
         sourceLine,
+        expectedSourceLine,
         expectedChecked,
         checked
       )

@@ -102,6 +102,13 @@ test('opens new Markdown edit tabs in Reader and keeps Source and Rich available
       timeout: 30_000
     })
     await expect(reader.locator('.mermaid-block svg')).toHaveCount(1, { timeout: 30_000 })
+    const mermaidTrigger = reader.getByRole('button', { name: 'Open diagram', exact: true }).first()
+    await mermaidTrigger.press('Enter')
+    const mediaDialog = orcaPage.getByRole('dialog')
+    await expect(mediaDialog.locator('svg.flowchart')).toBeVisible()
+    await expect(mediaDialog.getByRole('button', { name: 'Zoom in' })).toBeVisible()
+    await orcaPage.keyboard.press('Escape')
+    await expect(mermaidTrigger).toBeFocused()
     await expect(reader.locator('.markdown-reader-diagram-error [role="alert"]')).toContainText(
       'PlantUML error:'
     )

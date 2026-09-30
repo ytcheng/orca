@@ -12,7 +12,7 @@ export type RenderMarkdownDiagram = (args: {
 }) => Promise<string>
 
 const PLANTUML_RENDER_TIMEOUT_MS = 15_000
-const DISALLOWED_PLANTUML_DIRECTIVE = /^\s*!\s*(?:includeurl|include|import|theme)\b/im
+const DISALLOWED_PLANTUML_DIRECTIVE = /^\s*!\s*(?:include\w*|import|theme)\b/im
 
 let graphvizPromise: Promise<GraphvizInstance> | undefined
 let plantUmlModulePromise: Promise<PlantUmlModule> | undefined

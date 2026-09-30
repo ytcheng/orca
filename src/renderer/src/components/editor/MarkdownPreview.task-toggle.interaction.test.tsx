@@ -63,6 +63,7 @@ vi.mock('./editor-lazy-views', () => ({
   }: {
     onTaskToggle?: (change: {
       sourceLine: number
+      expectedSourceLine: string
       expectedChecked: boolean
       checked: boolean
     }) => void
@@ -70,7 +71,14 @@ vi.mock('./editor-lazy-views', () => ({
     <button
       type="button"
       aria-label="Toggle Markdown task"
-      onClick={() => onTaskToggle?.({ sourceLine: 1, expectedChecked: false, checked: true })}
+      onClick={() =>
+        onTaskToggle?.({
+          sourceLine: 1,
+          expectedSourceLine: '- [ ] task',
+          expectedChecked: false,
+          checked: true
+        })
+      }
     />
   ),
   RichMarkdownEditor: () => null
@@ -107,6 +115,7 @@ describe('MarkdownPreview task checkbox interaction', () => {
     content: string,
     onTaskToggle?: (change: {
       sourceLine: number
+      expectedSourceLine: string
       expectedChecked: boolean
       checked: boolean
     }) => void
@@ -138,6 +147,7 @@ describe('MarkdownPreview task checkbox interaction', () => {
     act(() => checkbox.click())
     expect(onTaskToggle).toHaveBeenCalledWith({
       sourceLine: 1,
+      expectedSourceLine: '- [ ] first',
       expectedChecked: false,
       checked: true
     })
@@ -153,8 +163,10 @@ describe('MarkdownPreview task checkbox interaction', () => {
     expect(container.querySelector<HTMLInputElement>('input[type="checkbox"]')?.disabled).toBe(true)
   })
 
-  it('writes the guarded checkbox update into the current edit buffer', () => {
-    const handleContentChange = vi.fn()
+  function renderEditSurface(
+    currentContent: string,
+    handleContentChange: (content: string) => void
+  ): void {
     const markdownDocuments = {
       mdSave: vi.fn(async () => true),
       onOpenDocLink: vi.fn(),
@@ -177,7 +189,7 @@ describe('MarkdownPreview task checkbox interaction', () => {
           }}
           viewStateScopeId="/repo/README.md"
           editorViewStateKey="/repo/README.md"
-          currentContent={'- [ ] task\n- [ ] later'}
+          currentContent={currentContent}
           mdViewMode="preview"
           inlineMarkdownRenderState={{
             renderMode: 'preview',
@@ -196,7 +208,9 @@ describe('MarkdownPreview task checkbox interaction', () => {
         />
       )
     })
+  }
 
+  function clickMockedTaskToggle(): void {
     const toggle = container.querySelector<HTMLButtonElement>(
       'button[aria-label="Toggle Markdown task"]'
     )
@@ -204,6 +218,22 @@ describe('MarkdownPreview task checkbox interaction', () => {
       throw new Error('Missing mocked task toggle')
     }
     act(() => toggle.click())
+  }
+
+  it('writes the guarded checkbox update into the current edit buffer', () => {
+    const handleContentChange = vi.fn()
+    renderEditSurface('- [ ] task\n- [ ] later', handleContentChange)
+
+    clickMockedTaskToggle()
     expect(handleContentChange).toHaveBeenCalledWith('- [x] task\n- [ ] later')
+  })
+
+  it('does not toggle a new task that reuses the rendered source line', () => {
+    const handleContentChange = vi.fn()
+    renderEditSurface('- [ ] Agent task\n- [ ] original task', handleContentChange)
+
+    clickMockedTaskToggle()
+
+    expect(handleContentChange).not.toHaveBeenCalled()
   })
 })

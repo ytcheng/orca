@@ -4,6 +4,7 @@ export type MarkdownPreviewPresentation = 'reader' | 'diff'
 
 export type MarkdownPreviewTaskToggle = {
   sourceLine: number
+  expectedSourceLine: string
   expectedChecked: boolean
   checked: boolean
 }

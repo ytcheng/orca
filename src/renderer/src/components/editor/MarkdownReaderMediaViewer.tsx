@@ -63,7 +63,6 @@ export function MarkdownReaderMediaViewer({
     null
   )
   const surfaceRef = useRef<HTMLDivElement | null>(null)
-  const diagramContainerRef = useRef<HTMLDivElement | null>(null)
   const zoom = zoomState.mediaKey === mediaKey ? zoomState.zoom : 1
   const mediaDimensions =
     mediaDimensionsState?.mediaKey === mediaKey ? mediaDimensionsState.dimensions : null
@@ -137,6 +136,28 @@ export function MarkdownReaderMediaViewer({
     },
     [handleWheel]
   )
+  const setDiagramContainerRef = useCallback(
+    (container: HTMLDivElement | null) => {
+      if (!container || kind !== 'diagram') {
+        return
+      }
+      const svg = container.querySelector('svg')
+      if (!svg) {
+        return
+      }
+      const viewBox = svg
+        .getAttribute('viewBox')
+        ?.trim()
+        .split(/[\s,]+/)
+        .map(Number)
+      const width = viewBox?.[2] || Number.parseFloat(svg.getAttribute('width') ?? '')
+      const height = viewBox?.[3] || Number.parseFloat(svg.getAttribute('height') ?? '')
+      if (width > 0 && height > 0) {
+        setMediaDimensionsState({ mediaKey, dimensions: { width, height } })
+      }
+    },
+    [kind, mediaKey]
+  )
   const handleOpenChange = useCallback(
     (open: boolean) => {
       if (open) {
@@ -174,26 +195,6 @@ export function MarkdownReaderMediaViewer({
     observer.observe(surface)
     return () => observer.disconnect()
   }, [isOpen])
-
-  useEffect(() => {
-    if (!isOpen || kind !== 'diagram') {
-      return
-    }
-    const svg = diagramContainerRef.current?.querySelector('svg')
-    if (!svg) {
-      return
-    }
-    const viewBox = svg
-      .getAttribute('viewBox')
-      ?.trim()
-      .split(/[\s,]+/)
-      .map(Number)
-    const width = viewBox?.[2] || Number.parseFloat(svg.getAttribute('width') ?? '')
-    const height = viewBox?.[3] || Number.parseFloat(svg.getAttribute('height') ?? '')
-    if (width > 0 && height > 0) {
-      setMediaDimensionsState({ mediaKey, dimensions: { width, height } })
-    }
-  }, [isOpen, kind, mediaKey])
 
   const handleImageLoad = useCallback(
     (event: React.SyntheticEvent<HTMLImageElement>) => {
@@ -261,7 +262,7 @@ export function MarkdownReaderMediaViewer({
                   />
                 ) : (
                   <div
-                    ref={diagramContainerRef}
+                    ref={setDiagramContainerRef}
                     className={`markdown-reader-media-svg ${imageLayoutSize ? 'is-sized' : ''}`.trim()}
                     dangerouslySetInnerHTML={{ __html: src }}
                   />

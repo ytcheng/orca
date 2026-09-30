@@ -91,6 +91,20 @@ describe('renderMarkdownDiagram', () => {
     }
   })
 
+  it.each([
+    ['include_once', '!include_once <C4/C4_Context>'],
+    ['include_many', '!include_many <C4/C4_Context>']
+  ])('rejects PlantUML %s before invoking the engine', async (_variant, directive) => {
+    plantumlRenderMock.mockImplementation(() => {
+      throw new Error('PlantUML engine was invoked')
+    })
+
+    await expect(
+      renderMarkdownDiagram({ kind: 'plantuml', source: directive, isDark: false })
+    ).rejects.toThrow(/include/i)
+    expect(plantumlRenderMock).not.toHaveBeenCalled()
+  })
+
   it('converts resolved RGB tokens to Graphviz hex colors', () => {
     document.documentElement.style.setProperty('--diagram-test-foreground', '#0a0b0c')
     const probe = document.createElement('span')

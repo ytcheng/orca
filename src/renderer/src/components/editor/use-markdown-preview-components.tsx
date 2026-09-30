@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import type { Components } from 'react-markdown'
 import type { MarkdownDocument } from '../../../../shared/filesystem-entry-types'
 import CodeBlockCopyButton from './CodeBlockCopyButton'
-import MermaidBlock from './MermaidBlock'
+import { MarkdownPreviewCodeFence } from './MarkdownPreviewCodeFence'
 import {
   getMarkdownDocLinkAnchor,
   parseMarkdownDocLinkHref,
@@ -15,73 +15,27 @@ import {
 } from './markdown-preview-block-model'
 import { handleMarkdownPreviewLinkClick } from './markdown-preview-link-actions'
 import { isMarkdownPreviewOpenModifier } from './markdown-preview-links'
-import { MarkdownReaderDiagramBlock } from './MarkdownReaderDiagramBlock'
+import { MarkdownReaderMermaidBlock } from './MarkdownReaderMermaidBlock'
 import { MarkdownReaderMediaViewer } from './MarkdownReaderMediaViewer'
+import { MarkdownReaderDiagramBlock } from './MarkdownReaderDiagramBlock'
 import { renderMarkdownPreviewHeading } from './MarkdownReaderHeading'
+import {
+  MarkdownPreviewTaskInput,
+  MarkdownPreviewTaskLineProvider
+} from './MarkdownPreviewTaskInput'
 import type {
   MarkdownPreviewPresentation,
   MarkdownPreviewPositionNode,
   MarkdownPreviewTaskToggle
 } from './markdown-preview-types'
-import {
-  getMarkdownReaderCodeText,
-  getMarkdownReaderDiagramKind
-} from './markdown-reader-code-fence'
+import MermaidBlock from './MermaidBlock'
 import type { MarkdownPreviewAnnotationRenderers } from './use-markdown-preview-annotation-renderers'
 import type { MarkdownPreviewFoundation } from './use-markdown-preview-foundation'
 import type { MarkdownPreviewReviewActions } from './use-markdown-preview-review-actions'
 import type { MarkdownPreviewViewport } from './use-markdown-preview-viewport'
 import { useLocalImageSrc } from './useLocalImageSrc'
 
-type MarkdownTaskLineContextValue = {
-  sourceLine?: number
-  onTaskToggle?: (change: MarkdownPreviewTaskToggle) => void
-}
-
-const MarkdownTaskLineContext = React.createContext<MarkdownTaskLineContextValue>({})
 const MarkdownLinkChildContext = React.createContext(false)
-
-function MarkdownTaskLineProvider({
-  sourceLine,
-  onTaskToggle,
-  children
-}: MarkdownTaskLineContextValue & { children: React.ReactNode }): React.JSX.Element {
-  const value = React.useMemo(() => ({ sourceLine, onTaskToggle }), [onTaskToggle, sourceLine])
-  return (
-    <MarkdownTaskLineContext.Provider value={value}>{children}</MarkdownTaskLineContext.Provider>
-  )
-}
-
-function MarkdownTaskInput({
-  node,
-  type,
-  checked,
-  ...props
-}: React.ComponentProps<'input'> & { node?: MarkdownPreviewPositionNode }): React.JSX.Element {
-  const taskLine = React.useContext(MarkdownTaskLineContext)
-  const sourceLine = node?.position?.start?.line ?? taskLine.sourceLine
-  const canToggleTask =
-    type === 'checkbox' && sourceLine !== undefined && taskLine.onTaskToggle !== undefined
-
-  return (
-    <input
-      {...props}
-      type={type}
-      checked={checked}
-      disabled={!canToggleTask}
-      onChange={(event) => {
-        if (!canToggleTask || sourceLine === undefined || !taskLine.onTaskToggle) {
-          return
-        }
-        taskLine.onTaskToggle({
-          sourceLine,
-          expectedChecked: checked === true,
-          checked: event.currentTarget.checked
-        })
-      }}
-    />
-  )
-}
 
 export function useMarkdownPreviewComponents({
   foundation,
@@ -107,6 +61,7 @@ export function useMarkdownPreviewComponents({
 }): Components {
   const {
     markdownDocumentIndex,
+    renderedContent,
     activateMarkdownLink,
     isDark,
     isMac,
@@ -237,32 +192,21 @@ export function useMarkdownPreviewComponents({
           </MarkdownReaderMediaViewer>
         )
       },
-      code: ({ className, children, ...props }) => {
-        if (/language-mermaid/.test(className || '')) {
-          return (
-            <MermaidBlock content={String(children).trimEnd()} isDark={isDark} htmlLabels={false} />
-          )
-        }
-        const diagramKind = getMarkdownReaderDiagramKind(className, presentation)
-        if (diagramKind) {
-          return (
-            <MarkdownReaderDiagramBlock
-              kind={diagramKind}
-              source={getMarkdownReaderCodeText(children).replace(/\n$/, '')}
-              isDark={isDark}
-            />
-          )
-        }
-        return (
-          <code className={className} {...props}>
-            {children}
-          </code>
-        )
-      },
-      input: (props) => <MarkdownTaskInput {...props} />,
+      code: ({ node, ...props }) => (
+        <MarkdownPreviewCodeFence
+          {...props}
+          node={node}
+          isDark={isDark}
+          presentation={presentation}
+        />
+      ),
+      input: (props) => <MarkdownPreviewTaskInput {...props} />,
       pre: ({ node, children, ...props }) => {
         const child = React.Children.toArray(children)[0]
         if (React.isValidElement(child) && child.type === MermaidBlock) {
+          return <>{children}</>
+        }
+        if (React.isValidElement(child) && child.type === MarkdownReaderMermaidBlock) {
           return <>{children}</>
         }
         if (React.isValidElement(child) && child.type === MarkdownReaderDiagramBlock) {
@@ -300,9 +244,13 @@ export function useMarkdownPreviewComponents({
           : getMarkdownPreviewBlockRange(positionNode)
         if (!range) {
           return (
-            <MarkdownTaskLineProvider sourceLine={sourceLine} onTaskToggle={onTaskToggle}>
+            <MarkdownPreviewTaskLineProvider
+              sourceLine={sourceLine}
+              renderedContent={renderedContent}
+              onTaskToggle={onTaskToggle}
+            >
               <li {...props}>{children}</li>
-            </MarkdownTaskLineProvider>
+            </MarkdownPreviewTaskLineProvider>
           )
         }
         const blockKey = `li:${range.startLine}-${range.endLine}`
@@ -313,7 +261,11 @@ export function useMarkdownPreviewComponents({
           getMarkdownPreviewAnnotationQuote(children)
         )
         return (
-          <MarkdownTaskLineProvider sourceLine={sourceLine} onTaskToggle={onTaskToggle}>
+          <MarkdownPreviewTaskLineProvider
+            sourceLine={sourceLine}
+            renderedContent={renderedContent}
+            onTaskToggle={onTaskToggle}
+          >
             <li {...props}>
               <div
                 className={`markdown-annotation-list-block ${
@@ -328,7 +280,7 @@ export function useMarkdownPreviewComponents({
                 {controls}
               </div>
             </li>
-          </MarkdownTaskLineProvider>
+          </MarkdownPreviewTaskLineProvider>
         )
       },
       h1: ({ node, children, ...props }) =>
@@ -379,6 +331,7 @@ export function useMarkdownPreviewComponents({
     getMarkdownCommentsForRange,
     handleAnnotatedMarkdownBlockClick,
     markdownDocumentIndex,
+    renderedContent,
     onOpenDocument,
     onTaskToggle,
     openFile,
