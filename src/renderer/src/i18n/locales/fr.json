@@ -15063,6 +15063,10 @@
           "resetZoom": "Réinitialiser le zoom",
           "description": "Utilisez les commandes de zoom pour redimensionner, puis faites défiler pour déplacer l’image."
         },
+        "MarkdownReaderHeading": {
+          "copy": "Copier le lien du titre : {{value0}}",
+          "copied": "Lien du titre copié : {{value0}}"
+        },
         "ImageDiffViewer": {
           "a651be62b0": "Modifié",
           "57aac3979a": "Original",

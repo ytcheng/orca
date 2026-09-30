@@ -13133,6 +13133,10 @@
           "resetZoom": "Restablecer zoom",
           "description": "Usa los controles de zoom para cambiar el tamaño y desplázate para mover la vista."
         },
+        "MarkdownReaderHeading": {
+          "copy": "Copiar enlace al encabezado: {{value0}}",
+          "copied": "Enlace del encabezado copiado: {{value0}}"
+        },
         "ImageDiffViewer": {
           "a651be62b0": "Modificado",
           "57aac3979a": "Original",

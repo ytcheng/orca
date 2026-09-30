@@ -14960,6 +14960,10 @@
           "resetZoom": "ズームをリセット",
           "description": "ズーム操作でサイズを調整し、スクロールして移動できます。"
         },
+        "MarkdownReaderHeading": {
+          "copy": "見出しへのリンクをコピー: {{value0}}",
+          "copied": "見出しリンクをコピーしました: {{value0}}"
+        },
         "ImageDiffViewer": {
           "a651be62b0": "修正済み",
           "57aac3979a": "オリジナル",

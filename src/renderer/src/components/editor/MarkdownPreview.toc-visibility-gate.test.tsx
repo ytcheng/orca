@@ -15,6 +15,7 @@ import type * as MarkdownTableOfContentsModule from './markdown-table-of-content
 import type { MarkdownPreviewPresentation } from './markdown-preview-types'
 
 const buildMarkdownTableOfContentsSpy = vi.hoisted(() => vi.fn())
+const writeClipboardTextMock = vi.hoisted(() => vi.fn(async () => true))
 
 const storeState = {
   openFile: vi.fn(),
@@ -58,8 +59,13 @@ vi.mock('@/lib/connection-owner-resolution', () => ({
 }))
 vi.mock('@/i18n/i18n', () => ({
   i18n: { language: 'en' },
-  translate: (_key: string, fallback: string) => fallback
+  translate: (_key: string, fallback: string, values?: Record<string, unknown>) =>
+    Object.entries(values ?? {}).reduce(
+      (text, [key, value]) => text.replaceAll(`{{${key}}}`, String(value)),
+      fallback
+    )
 }))
+vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }))
 vi.mock('./useLocalImageSrc', () => ({ useLocalImageSrc: (src?: string) => src }))
 vi.mock('./MermaidBlock', () => ({ default: () => null }))
 vi.mock('./MarkdownReaderDiagramBlock', () => ({
@@ -103,9 +109,12 @@ describe('MarkdownPreview TOC visibility gate', () => {
     })
     ;(window as unknown as { api: unknown }).api = {
       shell: { openUrl: vi.fn(), openFileUri: vi.fn(), pathExists: vi.fn(async () => true) },
-      ui: { writeClipboardText: vi.fn(async () => true) }
+      ui: { writeClipboardText: writeClipboardTextMock }
     }
     buildMarkdownTableOfContentsSpy.mockClear()
+    writeClipboardTextMock.mockClear()
+    storeState.openMarkdownPreview.mockClear()
+    storeState.worktreesByRepo = {}
     container = document.createElement('div')
     document.body.appendChild(container)
     root = createRoot(container)
@@ -121,7 +130,8 @@ describe('MarkdownPreview TOC visibility gate', () => {
   function render(
     showTableOfContents: boolean,
     presentation: MarkdownPreviewPresentation = 'reader',
-    content = DOC
+    content = DOC,
+    markdownAnnotationsEnabled = false
   ): void {
     act(() => {
       root.render(
@@ -132,6 +142,7 @@ describe('MarkdownPreview TOC visibility gate', () => {
           scrollCacheKey="test-key"
           showTableOfContents={showTableOfContents}
           presentation={presentation}
+          markdownAnnotationsEnabled={markdownAnnotationsEnabled}
         />
       )
     })
@@ -160,6 +171,19 @@ describe('MarkdownPreview TOC visibility gate', () => {
     expect(container.querySelector('nav[aria-label="toc-spy"]')?.textContent).toBe('Intro')
   })
 
+  it('opens the rendered-text search from the Reader toolbar', () => {
+    render(false)
+    const findButton = container.querySelector<HTMLButtonElement>(
+      'button[aria-label="Find in document"]'
+    )
+    if (!findButton) {
+      throw new Error('Missing Reader find button')
+    }
+
+    act(() => findButton.click())
+    expect(container.querySelector('.markdown-preview-search')).not.toBeNull()
+  })
+
   it('renders PlantUML fences only in the Reader presentation', () => {
     const source = '```plantuml\n@startuml\nAlice -> Bob\n@enduml\n```'
     render(false, 'reader', source)
@@ -169,5 +193,63 @@ describe('MarkdownPreview TOC visibility gate', () => {
     render(false, 'diff', source)
     expect(container.querySelector('.markdown-reader-diagram')).toBeNull()
     expect(container.querySelector('code.language-plantuml')?.textContent).toContain('Alice -> Bob')
+  })
+
+  it('copies an encoded heading fragment without opening another preview', async () => {
+    render(false, 'reader', '# 中文 标题')
+    const button = container.querySelector<HTMLButtonElement>(
+      '[aria-label="Copy link to heading: 中文 标题"]'
+    )
+    if (!button) {
+      throw new Error('Missing heading copy button')
+    }
+
+    await act(async () => button.click())
+
+    expect(writeClipboardTextMock).toHaveBeenCalledWith('#%E4%B8%AD%E6%96%87-%E6%A0%87%E9%A2%98')
+    expect(button.getAttribute('aria-label')).toBe('Copied heading link: 中文 标题')
+    expect(storeState.openMarkdownPreview).not.toHaveBeenCalled()
+  })
+
+  it('does not add copy-link controls to the diff presentation', () => {
+    render(false, 'diff', '# 中文 标题')
+    expect(container.querySelector('.markdown-reader-heading-link')).toBeNull()
+  })
+
+  it('preserves source line ranges and review note navigation in Reader', () => {
+    storeState.worktreesByRepo = {
+      repo: [
+        {
+          id: 'wt-1',
+          path: '/repo',
+          diffComments: [
+            {
+              id: 'note-1',
+              worktreeId: 'wt-1',
+              filePath: 'docs/README.md',
+              source: 'markdown',
+              lineNumber: 3,
+              body: 'Review this paragraph',
+              side: 'modified',
+              createdAt: 1
+            }
+          ]
+        }
+      ]
+    }
+    render(false, 'reader', '# Intro\n\nParagraph', true)
+    const block = container.querySelector<HTMLElement>(
+      '.markdown-annotation-block[data-source-line="3"][data-source-end-line="3"]'
+    )
+    if (!block) {
+      throw new Error('Missing Reader annotation block')
+    }
+    const note = block.querySelector<HTMLElement>('[data-markdown-review-note-id="note-1"]')
+    expect(note).not.toBeNull()
+
+    act(() => block.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true })))
+    expect(
+      container.querySelector<HTMLElement>('[data-markdown-review-note-id="note-1"]')?.className
+    ).toContain('is-active')
   })
 })

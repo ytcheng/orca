@@ -33,8 +33,6 @@ import {
   getZoomedImageLayoutSize
 } from './image-viewer-zoom'
 
-/* oxlint-disable react-doctor/no-adjust-state-on-prop-change -- Why: layout measurements come from the dialog DOM and ResizeObserver. */
-
 export type MarkdownReaderMediaViewerProps = {
   src: string
   alt: string
@@ -225,89 +223,90 @@ export function MarkdownReaderMediaViewer({
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button
+        <button
           type="button"
-          variant="ghost"
-          className="markdown-reader-media-trigger h-auto max-w-full min-w-0 p-0"
+          className="markdown-reader-media-trigger"
           aria-label={openLabel}
-          title={openLabel}
           onKeyDown={handleTriggerKeyDown}
         >
           {inlineMedia}
-        </Button>
+        </button>
       </DialogTrigger>
       <DialogContent
         showCloseButton={false}
-        className="markdown-reader-media-dialog flex h-[85vh] w-[92vw] max-w-6xl flex-col gap-0 overflow-hidden p-0 sm:max-w-6xl"
+        className="h-[85vh] w-[92vw] max-w-6xl overflow-hidden sm:max-w-6xl"
+        data-markdown-reader-media-dialog="true"
       >
         <DialogTitle className="sr-only">{alt || openLabel}</DialogTitle>
         <DialogDescription className="sr-only">{dialogDescription}</DialogDescription>
-        <div className="markdown-reader-media-header">
-          <span className="min-w-0 flex-1 truncate text-sm font-medium" title={alt}>
-            {alt || openLabel}
-          </span>
-          <Button type="button" variant="ghost" size="sm" onClick={() => handleOpenChange(false)}>
-            <X className="size-4" />
-            {closeLabel}
-          </Button>
-        </div>
-        <div ref={setSurfaceRef} className="markdown-reader-media-surface scrollbar-editor">
-          <div className="markdown-reader-media-canvas">
-            <div className="markdown-reader-media-layout" style={imageLayoutStyle}>
-              {kind === 'image' ? (
-                <img
-                  src={src}
-                  alt={alt}
-                  onLoad={handleImageLoad}
-                  className={`markdown-reader-media-image ${imageLayoutSize ? 'is-sized' : ''}`.trim()}
-                />
-              ) : (
-                <div
-                  ref={diagramContainerRef}
-                  className={`markdown-reader-media-svg ${imageLayoutSize ? 'is-sized' : ''}`.trim()}
-                  dangerouslySetInnerHTML={{ __html: src }}
-                />
-              )}
+        <div className="markdown-reader-media-dialog-layout">
+          <div className="markdown-reader-media-header">
+            <span className="min-w-0 flex-1 truncate text-sm font-medium" title={alt}>
+              {alt || openLabel}
+            </span>
+            <Button type="button" variant="ghost" size="sm" onClick={() => handleOpenChange(false)}>
+              <X className="size-4" />
+              {closeLabel}
+            </Button>
+          </div>
+          <div ref={setSurfaceRef} className="markdown-reader-media-surface scrollbar-editor">
+            <div className="markdown-reader-media-canvas">
+              <div className="markdown-reader-media-layout" style={imageLayoutStyle}>
+                {kind === 'image' ? (
+                  <img
+                    src={src}
+                    alt={alt}
+                    onLoad={handleImageLoad}
+                    className={`markdown-reader-media-image ${imageLayoutSize ? 'is-sized' : ''}`.trim()}
+                  />
+                ) : (
+                  <div
+                    ref={diagramContainerRef}
+                    className={`markdown-reader-media-svg ${imageLayoutSize ? 'is-sized' : ''}`.trim()}
+                    dangerouslySetInnerHTML={{ __html: src }}
+                  />
+                )}
+              </div>
             </div>
           </div>
-        </div>
-        <div className="markdown-reader-media-controls">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            aria-label={zoomOutLabel}
-            title={zoomOutLabel}
-            onClick={() => applyZoomChange((currentZoom) => currentZoom / IMAGE_VIEWER_ZOOM_STEP)}
-            disabled={zoom <= MIN_IMAGE_VIEWER_ZOOM}
-          >
-            <ZoomOut className="size-4" />
-          </Button>
-          <span data-zoom-percent="true" className="tabular-nums text-xs text-muted-foreground">
-            {zoomPercent}%
-          </span>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            aria-label={resetZoomLabel}
-            title={resetZoomLabel}
-            onClick={() => applyZoomChange(() => 1)}
-            disabled={zoom === 1}
-          >
-            <RotateCcw className="size-4" />
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            aria-label={zoomInLabel}
-            title={zoomInLabel}
-            onClick={() => applyZoomChange((currentZoom) => currentZoom * IMAGE_VIEWER_ZOOM_STEP)}
-            disabled={zoom >= MAX_IMAGE_VIEWER_ZOOM}
-          >
-            <ZoomIn className="size-4" />
-          </Button>
+          <div className="markdown-reader-media-controls">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              aria-label={zoomOutLabel}
+              title={zoomOutLabel}
+              onClick={() => applyZoomChange((currentZoom) => currentZoom / IMAGE_VIEWER_ZOOM_STEP)}
+              disabled={zoom <= MIN_IMAGE_VIEWER_ZOOM}
+            >
+              <ZoomOut className="size-4" />
+            </Button>
+            <span data-zoom-percent="true" className="tabular-nums text-xs text-muted-foreground">
+              {zoomPercent}%
+            </span>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              aria-label={resetZoomLabel}
+              title={resetZoomLabel}
+              onClick={() => applyZoomChange(() => 1)}
+              disabled={zoom === 1}
+            >
+              <RotateCcw className="size-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              aria-label={zoomInLabel}
+              title={zoomInLabel}
+              onClick={() => applyZoomChange((currentZoom) => currentZoom * IMAGE_VIEWER_ZOOM_STEP)}
+              disabled={zoom >= MAX_IMAGE_VIEWER_ZOOM}
+            >
+              <ZoomIn className="size-4" />
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

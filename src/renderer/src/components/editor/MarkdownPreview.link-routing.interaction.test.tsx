@@ -23,6 +23,11 @@ const worktreeLookup = vi.hoisted(() => ({
   value: [] as { id: string; path: string; diffComments: never[] }[]
 }))
 const statRuntimePathMock = vi.hoisted(() => vi.fn(async () => ({ isDirectory: false })))
+const useLocalImageSrcMock = vi.hoisted(() =>
+  vi.fn(
+    (src?: string, _filePath?: string, _placeholder?: unknown, _runtimeContext?: unknown) => src
+  )
+)
 
 // Minimal store: MarkdownPreview reads settings/worktreesByRepo plus a handful
 // of action functions. None of the actions fire on the http path under test.
@@ -76,7 +81,7 @@ vi.mock('@/i18n/i18n', () => ({
   translate: (_key: string, fallback: string) => fallback
 }))
 vi.mock('./useLocalImageSrc', () => ({
-  useLocalImageSrc: (src?: string) => src,
+  useLocalImageSrc: useLocalImageSrcMock,
   getLocalImageCacheKey: () => 'image-cache-key',
   loadLocalImageAbsolutePath: vi.fn(async () => null)
 }))
@@ -122,6 +127,7 @@ describe('MarkdownPreview http link routing (Cmd vs Cmd+Shift click)', () => {
     connectionOwner.value = null
     targetConnectionOwners.clear()
     worktreeLookup.value = []
+    useLocalImageSrcMock.mockClear()
     storeState.worktreesByRepo = {}
     storeState.openMarkdownPreview.mockClear()
     statRuntimePathMock.mockClear()
@@ -241,6 +247,60 @@ describe('MarkdownPreview http link routing (Cmd vs Cmd+Shift click)', () => {
       expect.objectContaining({ worktreeId: 'ssh-wt', filePath: '/srv/repo/child.md' }),
       { anchor: null }
     )
+  })
+
+  it('opens a relative Markdown link at its heading anchor in Reader', async () => {
+    const worktree = { id: 'wt-1', path: '/repo', diffComments: [] }
+    worktreeLookup.value = [worktree]
+    storeState.worktreesByRepo = { repo: [worktree] }
+    targetConnectionOwners.set('wt-1', null)
+    const anchor = render(
+      '[Guide](docs/guide.md#setup)',
+      'docs/guide.md#setup',
+      'wt-1',
+      '/repo/README.md'
+    )
+
+    await act(async () => {
+      anchor.dispatchEvent(new window.MouseEvent('click', { bubbles: true, cancelable: true }))
+    })
+
+    expect(statRuntimePathMock).toHaveBeenCalledWith(
+      expect.objectContaining({ worktreeId: 'wt-1' }),
+      '/repo/docs/guide.md'
+    )
+    expect(storeState.openMarkdownPreview).toHaveBeenCalledWith(
+      expect.objectContaining({ worktreeId: 'wt-1', filePath: '/repo/docs/guide.md' }),
+      { anchor: 'setup' }
+    )
+  })
+
+  it('keeps Reader image resolution on the SSH source owner', () => {
+    const sshWorktree = { id: 'ssh-wt', path: '/srv/repo', diffComments: [] as never[] }
+    worktreeLookup.value = [sshWorktree]
+    storeState.worktreesByRepo = { repo: [sshWorktree] }
+    connectionOwner.value = 'ssh-1'
+    targetConnectionOwners.set('ssh-wt', 'ssh-1')
+    const anchor = render(
+      '[![diagram](images/diagram.png)](https://example.com)',
+      'https://example.com',
+      'ssh-wt',
+      '/srv/repo/README.md'
+    )
+    const imageLoadCall = useLocalImageSrcMock.mock.calls.find(
+      ([src]) => src === 'images/diagram.png'
+    )
+
+    expect(anchor.querySelector('button[aria-label="Open image"]')).toBeNull()
+    expect(imageLoadCall?.[1]).toBe('/srv/repo/README.md')
+    expect(imageLoadCall?.[3]).toEqual(
+      expect.objectContaining({
+        worktreeId: 'ssh-wt',
+        worktreePath: '/srv/repo',
+        connectionId: 'ssh-1'
+      })
+    )
+    expect(openFileUriMock).not.toHaveBeenCalled()
   })
 
   it('renders a raw HTML superscript citation and routes it like a Markdown link', () => {

@@ -15127,6 +15127,10 @@
           "resetZoom": "Reset zoom",
           "description": "Use the zoom controls to resize the media and scroll to pan."
         },
+        "MarkdownReaderHeading": {
+          "copy": "Copy link to heading: {{value0}}",
+          "copied": "Copied heading link: {{value0}}"
+        },
         "ImageDiffViewer": {
           "a651be62b0": "Modified",
           "57aac3979a": "Original",

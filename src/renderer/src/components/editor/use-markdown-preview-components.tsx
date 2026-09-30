@@ -17,6 +17,7 @@ import { handleMarkdownPreviewLinkClick } from './markdown-preview-link-actions'
 import { isMarkdownPreviewOpenModifier } from './markdown-preview-links'
 import { MarkdownReaderDiagramBlock } from './MarkdownReaderDiagramBlock'
 import { MarkdownReaderMediaViewer } from './MarkdownReaderMediaViewer'
+import { renderMarkdownPreviewHeading } from './MarkdownReaderHeading'
 import type {
   MarkdownPreviewPresentation,
   MarkdownPreviewPositionNode,
@@ -334,49 +335,37 @@ export function useMarkdownPreviewComponents({
         wrapAnnotatedBlock(
           'h1',
           node as MarkdownPreviewPositionNode,
-          <h1 {...props} tabIndex={-1}>
-            {children}
-          </h1>
+          renderMarkdownPreviewHeading(presentation, 1, props, children)
         ),
       h2: ({ node, children, ...props }) =>
         wrapAnnotatedBlock(
           'h2',
           node as MarkdownPreviewPositionNode,
-          <h2 {...props} tabIndex={-1}>
-            {children}
-          </h2>
+          renderMarkdownPreviewHeading(presentation, 2, props, children)
         ),
       h3: ({ node, children, ...props }) =>
         wrapAnnotatedBlock(
           'h3',
           node as MarkdownPreviewPositionNode,
-          <h3 {...props} tabIndex={-1}>
-            {children}
-          </h3>
+          renderMarkdownPreviewHeading(presentation, 3, props, children)
         ),
       h4: ({ node, children, ...props }) =>
         wrapAnnotatedBlock(
           'h4',
           node as MarkdownPreviewPositionNode,
-          <h4 {...props} tabIndex={-1}>
-            {children}
-          </h4>
+          renderMarkdownPreviewHeading(presentation, 4, props, children)
         ),
       h5: ({ node, children, ...props }) =>
         wrapAnnotatedBlock(
           'h5',
           node as MarkdownPreviewPositionNode,
-          <h5 {...props} tabIndex={-1}>
-            {children}
-          </h5>
+          renderMarkdownPreviewHeading(presentation, 5, props, children)
         ),
       h6: ({ node, children, ...props }) =>
         wrapAnnotatedBlock(
           'h6',
           node as MarkdownPreviewPositionNode,
-          <h6 {...props} tabIndex={-1}>
-            {children}
-          </h6>
+          renderMarkdownPreviewHeading(presentation, 6, props, children)
         )
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- the image override is a hook component; listed inputs preserve its identity.

@@ -100,21 +100,65 @@
   font-size: 0.85em;
 }
 
+.markdown-reader-heading-link {
+  display: inline-flex;
+  margin-inline-start: 0.35em;
+  vertical-align: middle;
+  color: var(--muted-foreground);
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.markdown-body h1:hover .markdown-reader-heading-link,
+.markdown-body h2:hover .markdown-reader-heading-link,
+.markdown-body h3:hover .markdown-reader-heading-link,
+.markdown-body h4:hover .markdown-reader-heading-link,
+.markdown-body h5:hover .markdown-reader-heading-link,
+.markdown-body h6:hover .markdown-reader-heading-link,
+.markdown-body h1:focus-within .markdown-reader-heading-link,
+.markdown-body h2:focus-within .markdown-reader-heading-link,
+.markdown-body h3:focus-within .markdown-reader-heading-link,
+.markdown-body h4:focus-within .markdown-reader-heading-link,
+.markdown-body h5:focus-within .markdown-reader-heading-link,
+.markdown-body h6:focus-within .markdown-reader-heading-link,
+.markdown-reader-heading-link:focus-within {
+  opacity: 1;
+}
+
 .markdown-reader-media-trigger {
+  appearance: none;
+  border: 0;
   display: inline-flex;
   max-width: 100%;
   min-width: 0;
   align-items: center;
   justify-content: center;
+  background: transparent;
+  color: inherit;
+  font: inherit;
   padding: 0;
   vertical-align: baseline;
   cursor: zoom-in;
+}
+
+.markdown-reader-media-trigger:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
 }
 
 .markdown-reader-media-trigger img {
   display: block;
   max-width: 100%;
   height: auto;
+}
+
+.markdown-reader-media-dialog-layout {
+  display: flex;
+  width: calc(100% + 3rem);
+  height: calc(100% + 3rem);
+  flex-direction: column;
+  margin: -1.5rem;
+  overflow: hidden;
 }
 
 .markdown-reader-media-surface {

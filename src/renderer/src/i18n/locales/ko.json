@@ -14960,6 +14960,10 @@
           "resetZoom": "확대/축소 초기화",
           "description": "확대/축소 컨트롤로 크기를 조절하고 스크롤하여 이동하세요."
         },
+        "MarkdownReaderHeading": {
+          "copy": "제목 링크 복사: {{value0}}",
+          "copied": "제목 링크를 복사했습니다: {{value0}}"
+        },
         "ImageDiffViewer": {
           "a651be62b0": "수정됨",
           "57aac3979a": "원본",

@@ -14960,6 +14960,10 @@
           "resetZoom": "重置缩放",
           "description": "使用缩放控件调整大小，并滚动平移。"
         },
+        "MarkdownReaderHeading": {
+          "copy": "复制标题链接：{{value0}}",
+          "copied": "已复制标题链接：{{value0}}"
+        },
         "ImageDiffViewer": {
           "a651be62b0": "修改的",
           "57aac3979a": "原来的",
