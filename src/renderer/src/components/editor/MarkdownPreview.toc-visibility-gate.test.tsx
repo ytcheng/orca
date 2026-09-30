@@ -12,6 +12,7 @@ import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { MarkdownTocItem } from './markdown-table-of-contents'
 import type * as MarkdownTableOfContentsModule from './markdown-table-of-contents'
+import type { MarkdownPreviewPresentation } from './markdown-preview-types'
 
 const buildMarkdownTableOfContentsSpy = vi.hoisted(() => vi.fn())
 
@@ -110,19 +111,33 @@ describe('MarkdownPreview TOC visibility gate', () => {
     container.remove()
   })
 
-  function render(showTableOfContents: boolean): void {
+  function render(
+    showTableOfContents: boolean,
+    presentation: MarkdownPreviewPresentation = 'reader',
+    content = DOC
+  ): void {
     act(() => {
       root.render(
         <MarkdownPreview
-          content={DOC}
+          content={content}
           filePath="/repo/docs/README.md"
           sourceWorktreeId="wt-1"
           scrollCacheKey="test-key"
           showTableOfContents={showTableOfContents}
+          presentation={presentation}
         />
       )
     })
   }
+
+  it('routes Reader and diff through separate surface variants', () => {
+    render(false, 'reader')
+    expect(container.querySelector('.markdown-reader-surface')).not.toBeNull()
+
+    render(false, 'diff')
+    expect(container.querySelector('.markdown-reader-surface')).toBeNull()
+    expect(container.querySelector('.markdown-preview')).not.toBeNull()
+  })
 
   it('skips the full-document parse and renders no panel while the panel is closed', () => {
     render(false)

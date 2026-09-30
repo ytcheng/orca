@@ -7,6 +7,7 @@ import { MarkdownPreviewSearchBar } from './MarkdownPreviewSearchBar'
 import type { MarkdownPreviewFoundation } from './use-markdown-preview-foundation'
 import type { MarkdownPreviewReviewActions } from './use-markdown-preview-review-actions'
 import type { MarkdownPreviewViewport } from './use-markdown-preview-viewport'
+import type { MarkdownPreviewPresentation } from './markdown-preview-types'
 
 export function MarkdownPreviewSurface({
   foundation,
@@ -14,6 +15,7 @@ export function MarkdownPreviewSurface({
   reviewActions,
   components,
   filePath,
+  presentation,
   showTableOfContents,
   onCloseTableOfContents
 }: {
@@ -22,6 +24,7 @@ export function MarkdownPreviewSurface({
   reviewActions: MarkdownPreviewReviewActions
   components: Components
   filePath: string
+  presentation: MarkdownPreviewPresentation
   showTableOfContents: boolean
   onCloseTableOfContents?: () => void
 }): React.JSX.Element {
@@ -39,7 +42,13 @@ export function MarkdownPreviewSurface({
   } = foundation
 
   return (
-    <div className="markdown-preview-shell">
+    <div
+      className={
+        presentation === 'reader'
+          ? 'markdown-preview-shell markdown-reader-surface'
+          : 'markdown-preview-shell'
+      }
+    >
       {showTableOfContents ? (
         <MarkdownTableOfContentsPanel
           items={tableOfContentsItems}

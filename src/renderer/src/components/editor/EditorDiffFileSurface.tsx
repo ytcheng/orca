@@ -121,6 +121,7 @@ export function EditorDiffFileSurface({
             key={viewStateScopeId}
             content={modifiedDiffContent}
             filePath={activeFile.filePath}
+            presentation="diff"
             sourceFileId={activeFile.id}
             sourceWorktreeId={activeFile.worktreeId}
             sourceRuntimeEnvironmentId={activeFile.runtimeEnvironmentId}

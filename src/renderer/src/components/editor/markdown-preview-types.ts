@@ -1,8 +1,11 @@
 import type { MarkdownDocument } from '../../../../shared/filesystem-entry-types'
 
+export type MarkdownPreviewPresentation = 'reader' | 'diff'
+
 export type MarkdownPreviewProps = {
   content: string
   filePath: string
+  presentation: MarkdownPreviewPresentation
   sourceFileId?: string | null
   sourceWorktreeId?: string | null
   sourceRuntimeEnvironmentId?: string | null

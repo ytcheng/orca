@@ -146,6 +146,7 @@ describe('MarkdownPreview http link routing (Cmd vs Cmd+Shift click)', () => {
           filePath={filePath}
           sourceWorktreeId={sourceWorktreeId}
           scrollCacheKey="test-key"
+          presentation="reader"
         />
       )
     })

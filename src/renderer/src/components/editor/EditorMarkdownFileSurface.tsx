@@ -149,6 +149,7 @@ export function EditorMarkdownFileSurface({
             key={viewStateScopeId}
             content={currentContent}
             filePath={activeFile.filePath}
+            presentation="reader"
             sourceFileId={activeFile.id}
             sourceWorktreeId={activeFile.worktreeId}
             sourceRuntimeEnvironmentId={activeFile.runtimeEnvironmentId}

@@ -214,6 +214,7 @@ export function EditorContent({
           key={viewStateScopeId}
           content={editBuffers[previewSourceFileId] ?? fileContent.content}
           filePath={activeFile.filePath}
+          presentation="reader"
           sourceFileId={previewSourceFileId}
           sourceWorktreeId={activeFile.worktreeId}
           sourceRuntimeEnvironmentId={activeFile.runtimeEnvironmentId}

@@ -25,6 +25,7 @@ const EMPTY_MARKDOWN_DOCUMENTS: MarkdownDocument[] = []
 export default function MarkdownPreview({
   content,
   filePath,
+  presentation,
   sourceFileId = null,
   sourceWorktreeId = null,
   sourceRuntimeEnvironmentId = undefined,
@@ -77,6 +78,7 @@ export default function MarkdownPreview({
       reviewActions={reviewActions}
       components={components}
       filePath={filePath}
+      presentation={presentation}
       showTableOfContents={showTableOfContents}
       onCloseTableOfContents={onCloseTableOfContents}
     />
