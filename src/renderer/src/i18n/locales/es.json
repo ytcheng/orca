@@ -13124,6 +13124,14 @@
           "find": "Buscar en el documento",
           "label": "Controles del lector Markdown"
         },
+        "MarkdownReaderDiagramBlock": {
+          "loading": "Generando diagrama…",
+          "plantUmlError": "Error de PlantUML:",
+          "graphvizError": "Error de Graphviz:",
+          "timeout": "Se agotó el tiempo de espera al generar el diagrama",
+          "invalid": "La sintaxis del diagrama no es válida",
+          "imageLabel": "Diagrama generado"
+        },
         "MarkdownReaderMediaViewer": {
           "openImage": "Abrir imagen",
           "openDiagram": "Abrir diagrama",

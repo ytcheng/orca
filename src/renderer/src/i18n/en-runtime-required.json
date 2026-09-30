@@ -382,6 +382,10 @@
           "d07e4b8553": "branch",
           "d16e037f40": "rich"
         },
+        "MarkdownReaderHeading": {
+          "copied": "Copied heading link: {{value0}}",
+          "copy": "Copy link to heading: {{value0}}"
+        },
         "ReviewNotesSendMenuContent": {
           "50f7e753ea": "Sending notes to active agent...",
           "bb9c69a0c9": "Notes sent to active agent.",
@@ -1588,9 +1592,6 @@
             "042c551bc5": "config",
             "0d1c334987": "lid",
             "0d752916f8": "hooks",
-            "agent-trust-trust": "trust",
-            "agent-trust-folder": "folder",
-            "agent-trust-worktree": "worktree",
             "13b20636a6": "waiting",
             "167daeb5e9": "command",
             "2afd3b5858": "enable",
@@ -1615,6 +1616,9 @@
             "a79d266f71": "session",
             "afbf35be68": "stable session",
             "affbf130f6": "working",
+            "agent-trust-folder": "folder",
+            "agent-trust-trust": "trust",
+            "agent-trust-worktree": "worktree",
             "be59907510": "override",
             "be7ea3553b": "tab",
             "c1317fe641": "restore",

@@ -88,8 +88,7 @@ export function MarkdownReaderDiagramBlock({
     return (
       <div className="markdown-reader-diagram markdown-reader-diagram-error">
         <div role="alert">
-          {translate('auto.components.editor.MarkdownReaderDiagramBlock.error', 'Diagram error:')}{' '}
-          {state.message}
+          {translateDiagramError(kind)} {state.message}
         </div>
         <pre>
           <code>{source}</code>
@@ -114,6 +113,18 @@ export function MarkdownReaderDiagramBlock({
       />
     </MarkdownReaderMediaViewer>
   )
+}
+
+function translateDiagramError(kind: MarkdownReaderDiagramKind): string {
+  return kind === 'plantuml'
+    ? translate(
+        'auto.components.editor.MarkdownReaderDiagramBlock.plantUmlError',
+        'PlantUML error:'
+      )
+    : translate(
+        'auto.components.editor.MarkdownReaderDiagramBlock.graphvizError',
+        'Graphviz error:'
+      )
 }
 
 export function sanitizeMarkdownDiagramSvg(svg: string): string {

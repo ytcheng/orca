@@ -14951,6 +14951,14 @@
           "find": "ドキュメント内を検索",
           "label": "Markdown 閲覧コントロール"
         },
+        "MarkdownReaderDiagramBlock": {
+          "loading": "図をレンダリングしています…",
+          "plantUmlError": "PlantUML エラー:",
+          "graphvizError": "Graphviz エラー:",
+          "timeout": "図のレンダリングがタイムアウトしました",
+          "invalid": "図の構文が無効です",
+          "imageLabel": "レンダリング済みの図"
+        },
         "MarkdownReaderMediaViewer": {
           "openImage": "画像を拡大",
           "openDiagram": "図を拡大",

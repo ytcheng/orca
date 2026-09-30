@@ -14951,6 +14951,14 @@
           "find": "在文档中查找",
           "label": "Markdown 阅读器工具"
         },
+        "MarkdownReaderDiagramBlock": {
+          "loading": "正在渲染图表…",
+          "plantUmlError": "PlantUML 错误：",
+          "graphvizError": "Graphviz 错误：",
+          "timeout": "图表渲染超时",
+          "invalid": "图表语法无效",
+          "imageLabel": "已渲染图表"
+        },
         "MarkdownReaderMediaViewer": {
           "openImage": "放大图片",
           "openDiagram": "放大图表",

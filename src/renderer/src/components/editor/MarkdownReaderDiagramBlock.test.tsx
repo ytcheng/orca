@@ -45,9 +45,9 @@ describe('MarkdownReaderDiagramBlock', () => {
     vi.useRealTimers()
   })
 
-  function render(source: string): void {
+  function render(source: string, kind: 'plantuml' | 'graphviz' = 'plantuml'): void {
     act(() => {
-      root.render(<MarkdownReaderDiagramBlock kind="plantuml" source={source} isDark={false} />)
+      root.render(<MarkdownReaderDiagramBlock kind={kind} source={source} isDark={false} />)
     })
   }
 
@@ -59,8 +59,20 @@ describe('MarkdownReaderDiagramBlock', () => {
       await Promise.resolve()
     })
 
+    expect(container.querySelector('[role="alert"]')?.textContent).toContain('PlantUML error:')
     expect(container.textContent).toContain('Invalid diagram')
     expect(container.querySelector('pre code')?.textContent).toBe('@startuml\ninvalid\n@enduml')
+  })
+
+  it('labels Graphviz errors distinctly', async () => {
+    renderMarkdownDiagramMock.mockRejectedValue(new Error('Invalid graph'))
+    render('digraph {', 'graphviz')
+
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    expect(container.querySelector('[role="alert"]')?.textContent).toContain('Graphviz error:')
   })
 
   it('sanitizes event attributes and external resource references', async () => {

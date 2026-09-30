@@ -15118,6 +15118,14 @@
           "find": "Find in document",
           "label": "Markdown reader controls"
         },
+        "MarkdownReaderDiagramBlock": {
+          "loading": "Rendering diagram…",
+          "plantUmlError": "PlantUML error:",
+          "graphvizError": "Graphviz error:",
+          "timeout": "Diagram rendering timed out",
+          "invalid": "Invalid diagram syntax",
+          "imageLabel": "Rendered diagram"
+        },
         "MarkdownReaderMediaViewer": {
           "openImage": "Open image",
           "openDiagram": "Open diagram",

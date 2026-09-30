@@ -14951,6 +14951,14 @@
           "find": "문서에서 찾기",
           "label": "Markdown 읽기 컨트롤"
         },
+        "MarkdownReaderDiagramBlock": {
+          "loading": "다이어그램 렌더링 중…",
+          "plantUmlError": "PlantUML 오류:",
+          "graphvizError": "Graphviz 오류:",
+          "timeout": "다이어그램 렌더링 시간이 초과되었습니다",
+          "invalid": "다이어그램 구문이 올바르지 않습니다",
+          "imageLabel": "렌더링된 다이어그램"
+        },
         "MarkdownReaderMediaViewer": {
           "openImage": "이미지 확대",
           "openDiagram": "다이어그램 확대",

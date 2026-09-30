@@ -1,10 +1,12 @@
 ---
-title: Rich markdown editor
+title: Markdown in Orca
 ---
 
-Markdown files open in a rich editor by default — slash menu, toolbar, inline previews for images and code, internal link autocomplete. Toggle to raw Monaco whenever you want with `Cmd-Shift-M`.
+Markdown files open in Orca's native Reader by default. It renders headings, tables, code blocks, math, and Mermaid, PlantUML, and Graphviz diagrams. Use the Reader toolbar to show the table of contents or search rendered text. Check task-list items directly in the document, and click an image or diagram to zoom and pan it. Use the view switcher to open the same file in **Source** or **Rich Editor**; each tab keeps its selected view.
 
-For files larger than 300 KB, Orca opens the raw editor first to keep typing responsive. Choose **Open anyway** in the fallback banner when you want the rich editor for that file; the choice lasts until you close its tab. Files that use Markdown constructs the rich editor cannot safely preserve still stay in the raw editor.
+The Rich Editor includes a slash menu, formatting toolbar, inline image and code previews, and internal link autocomplete.
+
+Files larger than 600 KiB still open in Reader, while Rich Editor stays in Source mode to keep typing responsive. Choose **Open anyway** in the fallback banner to use Rich Editor for that file; the choice lasts until you close its tab. Markdown constructs that Rich Editor cannot safely preserve stay in Source mode, while Reader remains available.
 
 ## Slash menu
 
@@ -18,7 +20,7 @@ Type `[[` to start a wiki-style link. Orca autocompletes file paths within the w
 
 ## Search
 
-In-editor markdown search respects rendered text, not raw markdown — so searching for "Install" finds a heading whether written as `# Install` or `<h1>Install</h1>`.
+Reader search respects rendered text, not raw markdown — so searching for "Install" finds a heading whether written as `# Install` or `<h1>Install</h1>`.
 
 ## Review annotations
 
@@ -28,7 +30,7 @@ When you're reviewing markdown in Orca's rich editor, select rendered text to ad
 
 ## Front matter
 
-YAML and TOML front matter is shown in the rich editor and rendered preview by default so docs and static-site posts expose their metadata without switching to raw markdown. Open the editor's **More actions** (`…`) menu and choose **Hide front matter** when you want the body-only view; the same menu toggles it back to **Show front matter**. The toggle is per-file, so hiding it on one document doesn't hide it on the rest.
+YAML and TOML front matter is shown in the Rich Editor and Reader by default so docs and static-site posts expose their metadata without switching to Source. Open the editor's **More actions** (`…`) menu and choose **Hide front matter** when you want the body-only view; the same menu toggles it back to **Show front matter**. The toggle is per-file, so hiding it on one document doesn't hide it on the rest.
 
 ## Tables
 
@@ -47,7 +49,7 @@ When the caret is in a table, the rich-editor toolbar shows one-click **row and 
 
 ## Table of contents
 
-For long documents, click the **Table of Contents** button (tree icon) in the editor header to open a heading outline pinned to the left of the editor. Clicking a heading jumps to it; collapse and expand controls keep deeply nested sections readable. Available in rich and preview modes.
+For long documents, use the **Table of Contents** button (tree icon) in the Reader toolbar or editor header to show a heading outline pinned to the left of the editor. Clicking a heading jumps to it; collapse and expand controls keep deeply nested sections readable. The outline is available in Reader and Rich Editor.
 
 ## Share as artifact
 

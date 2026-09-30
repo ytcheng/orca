@@ -15054,6 +15054,14 @@
           "find": "Rechercher dans le document",
           "label": "Commandes du lecteur Markdown"
         },
+        "MarkdownReaderDiagramBlock": {
+          "loading": "Rendu du diagramme…",
+          "plantUmlError": "Erreur PlantUML :",
+          "graphvizError": "Erreur Graphviz :",
+          "timeout": "Le rendu du diagramme a expiré",
+          "invalid": "Syntaxe du diagramme invalide",
+          "imageLabel": "Diagramme généré"
+        },
         "MarkdownReaderMediaViewer": {
           "openImage": "Ouvrir l’image",
           "openDiagram": "Ouvrir le diagramme",
