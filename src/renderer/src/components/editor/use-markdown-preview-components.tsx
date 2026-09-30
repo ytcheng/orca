@@ -15,10 +15,13 @@ import {
 } from './markdown-preview-block-model'
 import { handleMarkdownPreviewLinkClick } from './markdown-preview-link-actions'
 import { isMarkdownPreviewOpenModifier } from './markdown-preview-links'
+import { MarkdownReaderDiagramBlock } from './MarkdownReaderDiagramBlock'
 import type {
+  MarkdownPreviewPresentation,
   MarkdownPreviewPositionNode,
   MarkdownPreviewTaskToggle
 } from './markdown-preview-types'
+import type { MarkdownReaderDiagramKind } from './markdown-reader-diagram-renderers'
 import type { MarkdownPreviewAnnotationRenderers } from './use-markdown-preview-annotation-renderers'
 import type { MarkdownPreviewFoundation } from './use-markdown-preview-foundation'
 import type { MarkdownPreviewReviewActions } from './use-markdown-preview-review-actions'
@@ -31,6 +34,35 @@ type MarkdownTaskLineContextValue = {
 }
 
 const MarkdownTaskLineContext = React.createContext<MarkdownTaskLineContextValue>({})
+
+function getReaderDiagramKind(
+  className: string | undefined,
+  presentation: MarkdownPreviewPresentation
+): MarkdownReaderDiagramKind | null {
+  if (presentation !== 'reader') {
+    return null
+  }
+  const language = className?.match(/(?:^|\s)language-(plantuml|puml|dot|graphviz)(?:\s|$)/i)?.[1]
+  if (language === 'plantuml' || language === 'puml') {
+    return 'plantuml'
+  }
+  if (language === 'dot' || language === 'graphviz') {
+    return 'graphviz'
+  }
+  return null
+}
+
+function getCodeText(children: React.ReactNode): string {
+  let text = ''
+  React.Children.forEach(children, (child) => {
+    if (typeof child === 'string' || typeof child === 'number') {
+      text += child
+    } else if (React.isValidElement<{ children?: React.ReactNode }>(child)) {
+      text += getCodeText(child.props.children)
+    }
+  })
+  return text
+}
 
 function MarkdownTaskLineProvider({
   sourceLine,
@@ -80,6 +112,7 @@ export function useMarkdownPreviewComponents({
   reviewActions,
   annotationRenderers,
   filePath,
+  presentation,
   onOpenDocument,
   onTaskToggle
 }: {
@@ -88,6 +121,7 @@ export function useMarkdownPreviewComponents({
   reviewActions: MarkdownPreviewReviewActions
   annotationRenderers: MarkdownPreviewAnnotationRenderers
   filePath: string
+  presentation: MarkdownPreviewPresentation
   onOpenDocument?: (
     document: MarkdownDocument,
     options?: { anchor?: string | null }
@@ -213,6 +247,16 @@ export function useMarkdownPreviewComponents({
             <MermaidBlock content={String(children).trimEnd()} isDark={isDark} htmlLabels={false} />
           )
         }
+        const diagramKind = getReaderDiagramKind(className, presentation)
+        if (diagramKind) {
+          return (
+            <MarkdownReaderDiagramBlock
+              kind={diagramKind}
+              source={getCodeText(children).replace(/\n$/, '')}
+              isDark={isDark}
+            />
+          )
+        }
         return (
           <code className={className} {...props}>
             {children}
@@ -224,6 +268,13 @@ export function useMarkdownPreviewComponents({
         const child = React.Children.toArray(children)[0]
         if (React.isValidElement(child) && child.type === MermaidBlock) {
           return <>{children}</>
+        }
+        if (React.isValidElement(child) && child.type === MarkdownReaderDiagramBlock) {
+          return wrapAnnotatedBlock(
+            'pre',
+            node as MarkdownPreviewPositionNode,
+            <div className="markdown-reader-diagram-block">{children}</div>
+          )
         }
         return wrapAnnotatedBlock(
           'pre',
@@ -336,6 +387,7 @@ export function useMarkdownPreviewComponents({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- the image override is a hook component; listed inputs preserve its identity.
   }, [
     filePath,
+    presentation,
     activateMarkdownLink,
     isDark,
     isMac,

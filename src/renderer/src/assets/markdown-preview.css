@@ -75,6 +75,30 @@
   }
 }
 
+.markdown-reader-diagram {
+  max-width: 100%;
+  margin: 1em 0;
+  overflow-x: auto;
+}
+
+.markdown-reader-diagram svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+}
+
+.markdown-reader-diagram-loading [role='status'] {
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+
+.markdown-reader-diagram-error [role='alert'] {
+  margin-bottom: 0.5em;
+  color: var(--destructive);
+  font-size: 0.85em;
+}
+
 .markdown-preview:focus-visible {
   outline: none;
 }

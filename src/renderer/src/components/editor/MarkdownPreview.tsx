@@ -70,6 +70,7 @@ export default function MarkdownPreview({
     reviewActions,
     annotationRenderers,
     filePath,
+    presentation,
     onOpenDocument,
     onTaskToggle: presentation === 'reader' ? onTaskToggle : undefined
   })

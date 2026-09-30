@@ -62,6 +62,13 @@ vi.mock('@/i18n/i18n', () => ({
 }))
 vi.mock('./useLocalImageSrc', () => ({ useLocalImageSrc: (src?: string) => src }))
 vi.mock('./MermaidBlock', () => ({ default: () => null }))
+vi.mock('./MarkdownReaderDiagramBlock', () => ({
+  MarkdownReaderDiagramBlock: ({ kind, source }: { kind: string; source: string }) => (
+    <div className="markdown-reader-diagram" data-kind={kind}>
+      {source}
+    </div>
+  )
+}))
 vi.mock('./CodeBlockCopyButton', () => ({
   default: ({ children }: { children: React.ReactNode }) => children
 }))
@@ -151,5 +158,16 @@ describe('MarkdownPreview TOC visibility gate', () => {
     render(true)
     expect(buildMarkdownTableOfContentsSpy).toHaveBeenCalledWith(DOC)
     expect(container.querySelector('nav[aria-label="toc-spy"]')?.textContent).toBe('Intro')
+  })
+
+  it('renders PlantUML fences only in the Reader presentation', () => {
+    const source = '```plantuml\n@startuml\nAlice -> Bob\n@enduml\n```'
+    render(false, 'reader', source)
+    const diagram = container.querySelector('.markdown-reader-diagram[data-kind="plantuml"]')
+    expect(diagram?.textContent).toContain('Alice -> Bob')
+
+    render(false, 'diff', source)
+    expect(container.querySelector('.markdown-reader-diagram')).toBeNull()
+    expect(container.querySelector('code.language-plantuml')?.textContent).toContain('Alice -> Bob')
   })
 })
