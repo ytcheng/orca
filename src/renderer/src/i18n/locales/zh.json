@@ -14966,7 +14966,7 @@
           "zoomIn": "放大",
           "zoomOut": "缩小",
           "resetZoom": "重置缩放",
-          "description": "使用缩放控件调整大小，并滚动平移。"
+          "description": "使用缩放控件调整大小，然后拖动或滚动以平移图像。"
         },
         "MarkdownReaderHeading": {
           "copy": "复制标题链接：{{value0}}",

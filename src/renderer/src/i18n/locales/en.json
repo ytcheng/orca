@@ -15133,7 +15133,7 @@
           "zoomIn": "Zoom in",
           "zoomOut": "Zoom out",
           "resetZoom": "Reset zoom",
-          "description": "Use the zoom controls to resize the media and scroll to pan."
+          "description": "Use the zoom controls to resize the media, then drag or scroll to pan."
         },
         "MarkdownReaderHeading": {
           "copy": "Copy link to heading: {{value0}}",

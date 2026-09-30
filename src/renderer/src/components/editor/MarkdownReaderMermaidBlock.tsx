@@ -17,9 +17,10 @@ export function MarkdownReaderMermaidBlock({
   const svg = renderedSvg?.contentKey === contentKey ? renderedSvg.svg : null
   const handleRenderedSvgChange = useCallback(
     (nextSvg: string | null): void => {
+      const sizedSvg = nextSvg ? sizeMermaidSvgFromViewBox(nextSvg) : null
       setRenderedSvg((current) => {
-        if (nextSvg) {
-          return { contentKey, svg: nextSvg }
+        if (sizedSvg) {
+          return { contentKey, svg: sizedSvg }
         }
         return current?.contentKey === contentKey ? null : current
       })
@@ -54,4 +55,39 @@ export function MarkdownReaderMermaidBlock({
       />
     </MarkdownReaderMediaViewer>
   )
+}
+
+function sizeMermaidSvgFromViewBox(svg: string): string {
+  const template = document.createElement('template')
+  template.innerHTML = svg
+  const root = template.content.querySelector('svg')
+  const dimensions = root
+    ?.getAttribute('viewBox')
+    ?.trim()
+    .split(/[\s,]+/)
+    .map(Number)
+  const width = dimensions?.[2]
+  const height = dimensions?.[3]
+  if (
+    !root ||
+    dimensions?.length !== 4 ||
+    width === undefined ||
+    height === undefined ||
+    !Number.isFinite(width) ||
+    !Number.isFinite(height) ||
+    width <= 0 ||
+    height <= 0
+  ) {
+    return svg
+  }
+
+  root.setAttribute('width', String(Math.ceil(width)))
+  root.setAttribute('height', String(Math.ceil(height)))
+  if (root.style.width.endsWith('%')) {
+    root.style.removeProperty('width')
+  }
+  if (root.style.height.endsWith('%')) {
+    root.style.removeProperty('height')
+  }
+  return template.innerHTML
 }

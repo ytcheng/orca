@@ -13139,7 +13139,7 @@
           "zoomIn": "Ampliar",
           "zoomOut": "Reducir",
           "resetZoom": "Restablecer zoom",
-          "description": "Usa los controles de zoom para cambiar el tamaño y desplázate para mover la vista."
+          "description": "Usa los controles de zoom para cambiar el tamaño y arrastra o desplázate para mover la vista."
         },
         "MarkdownReaderHeading": {
           "copy": "Copiar enlace al encabezado: {{value0}}",

@@ -47,6 +47,14 @@ type MediaDimensionsState = {
   dimensions: ImageViewerImageDimensions
 }
 
+type MediaViewerDrag = {
+  pointerId: number
+  clientX: number
+  clientY: number
+  scrollLeft: number
+  scrollTop: number
+}
+
 export function MarkdownReaderMediaViewer({
   src,
   alt,
@@ -63,6 +71,8 @@ export function MarkdownReaderMediaViewer({
     null
   )
   const surfaceRef = useRef<HTMLDivElement | null>(null)
+  const dragRef = useRef<MediaViewerDrag | null>(null)
+  const [isPanning, setIsPanning] = useState(false)
   const zoom = zoomState.mediaKey === mediaKey ? zoomState.zoom : 1
   const mediaDimensions =
     mediaDimensionsState?.mediaKey === mediaKey ? mediaDimensionsState.dimensions : null
@@ -85,7 +95,7 @@ export function MarkdownReaderMediaViewer({
   )
   const dialogDescription = translate(
     'auto.components.editor.MarkdownReaderMediaViewer.description',
-    'Use the zoom controls to resize the media and scroll to pan.'
+    'Use the zoom controls to resize the media, then drag or scroll to pan.'
   )
   const zoomPercent = Math.round(zoom * 100)
 
@@ -121,6 +131,46 @@ export function MarkdownReaderMediaViewer({
     (event: WheelEvent) => applyImageSurfaceWheel(event, applyZoomChange),
     [applyZoomChange]
   )
+  const handleSurfacePointerDown = useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      if (kind !== 'diagram' || event.pointerType !== 'mouse' || event.button !== 0) {
+        return
+      }
+
+      dragRef.current = {
+        pointerId: event.pointerId,
+        clientX: event.clientX,
+        clientY: event.clientY,
+        scrollLeft: event.currentTarget.scrollLeft,
+        scrollTop: event.currentTarget.scrollTop
+      }
+      event.currentTarget.setPointerCapture(event.pointerId)
+      setIsPanning(true)
+      event.preventDefault()
+    },
+    [kind]
+  )
+  const handleSurfacePointerMove = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current
+    if (!drag || drag.pointerId !== event.pointerId) {
+      return
+    }
+
+    event.currentTarget.scrollLeft = drag.scrollLeft - (event.clientX - drag.clientX)
+    event.currentTarget.scrollTop = drag.scrollTop - (event.clientY - drag.clientY)
+  }, [])
+  const handleSurfacePointerEnd = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current
+    if (!drag || drag.pointerId !== event.pointerId) {
+      return
+    }
+
+    dragRef.current = null
+    setIsPanning(false)
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId)
+    }
+  }, [])
   const setSurfaceRef = useCallback(
     (surface: HTMLDivElement | null) => {
       if (surfaceRef.current) {
@@ -227,6 +277,7 @@ export function MarkdownReaderMediaViewer({
         <button
           type="button"
           className="markdown-reader-media-trigger"
+          data-media-kind={kind}
           aria-label={openLabel}
           onKeyDown={handleTriggerKeyDown}
         >
@@ -242,15 +293,28 @@ export function MarkdownReaderMediaViewer({
         <DialogDescription className="sr-only">{dialogDescription}</DialogDescription>
         <div className="markdown-reader-media-dialog-layout">
           <div className="markdown-reader-media-header">
-            <span className="min-w-0 flex-1 truncate text-sm font-medium" title={alt}>
-              {alt || openLabel}
-            </span>
-            <Button type="button" variant="ghost" size="sm" onClick={() => handleOpenChange(false)}>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              aria-label={closeLabel}
+              title={closeLabel}
+              onClick={() => handleOpenChange(false)}
+            >
               <X className="size-4" />
-              {closeLabel}
             </Button>
           </div>
-          <div ref={setSurfaceRef} className="markdown-reader-media-surface scrollbar-editor">
+          <div
+            ref={setSurfaceRef}
+            className="markdown-reader-media-surface scrollbar-editor"
+            data-media-kind={kind}
+            data-panning={isPanning}
+            onPointerDown={handleSurfacePointerDown}
+            onPointerMove={handleSurfacePointerMove}
+            onPointerUp={handleSurfacePointerEnd}
+            onPointerCancel={handleSurfacePointerEnd}
+            onLostPointerCapture={handleSurfacePointerEnd}
+          >
             <div className="markdown-reader-media-canvas">
               <div className="markdown-reader-media-layout" style={imageLayoutStyle}>
                 {kind === 'image' ? (
@@ -289,23 +353,23 @@ export function MarkdownReaderMediaViewer({
               type="button"
               variant="ghost"
               size="icon-sm"
-              aria-label={resetZoomLabel}
-              title={resetZoomLabel}
-              onClick={() => applyZoomChange(() => 1)}
-              disabled={zoom === 1}
-            >
-              <RotateCcw className="size-4" />
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon-sm"
               aria-label={zoomInLabel}
               title={zoomInLabel}
               onClick={() => applyZoomChange((currentZoom) => currentZoom * IMAGE_VIEWER_ZOOM_STEP)}
               disabled={zoom >= MAX_IMAGE_VIEWER_ZOOM}
             >
               <ZoomIn className="size-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              aria-label={resetZoomLabel}
+              title={resetZoomLabel}
+              onClick={() => applyZoomChange(() => 1)}
+              disabled={zoom === 1}
+            >
+              <RotateCcw className="size-4" />
             </Button>
           </div>
         </div>

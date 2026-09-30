@@ -14966,7 +14966,7 @@
           "zoomIn": "拡大",
           "zoomOut": "縮小",
           "resetZoom": "ズームをリセット",
-          "description": "ズーム操作でサイズを調整し、スクロールして移動できます。"
+          "description": "ズーム操作でサイズを調整し、ドラッグまたはスクロールして移動できます。"
         },
         "MarkdownReaderHeading": {
           "copy": "見出しへのリンクをコピー: {{value0}}",

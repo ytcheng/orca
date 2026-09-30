@@ -15069,7 +15069,7 @@
           "zoomIn": "Zoomer",
           "zoomOut": "Dézoomer",
           "resetZoom": "Réinitialiser le zoom",
-          "description": "Utilisez les commandes de zoom pour redimensionner, puis faites défiler pour déplacer l’image."
+          "description": "Utilisez les commandes de zoom pour redimensionner, puis faites glisser ou défiler pour déplacer l’image."
         },
         "MarkdownReaderHeading": {
           "copy": "Copier le lien du titre : {{value0}}",

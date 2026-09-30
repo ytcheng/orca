@@ -14966,7 +14966,7 @@
           "zoomIn": "확대",
           "zoomOut": "축소",
           "resetZoom": "확대/축소 초기화",
-          "description": "확대/축소 컨트롤로 크기를 조절하고 스크롤하여 이동하세요."
+          "description": "확대/축소 컨트롤로 크기를 조절한 뒤 드래그하거나 스크롤하여 이동하세요."
         },
         "MarkdownReaderHeading": {
           "copy": "제목 링크 복사: {{value0}}",

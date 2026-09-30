@@ -57,10 +57,10 @@
 
 .markdown-reader-article {
   box-sizing: border-box;
-  width: min(100%, 900px);
+  width: min(100%, 1200px);
   min-width: 0;
   margin-inline: auto;
-  padding: 32px 48px 64px;
+  padding: 32px clamp(28px, 4vw, 56px) 64px;
 }
 
 @container (max-width: 760px) {
@@ -141,6 +141,25 @@
   cursor: zoom-in;
 }
 
+.markdown-reader-media-trigger[data-media-kind='diagram'] {
+  display: flex;
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+}
+
+.markdown-reader-media-trigger[data-media-kind='diagram'] > .markdown-reader-diagram,
+.markdown-reader-media-trigger[data-media-kind='diagram'] > .mermaid-block {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.markdown-reader-media-trigger[data-media-kind='diagram'] svg {
+  max-width: 100% !important;
+  height: auto;
+}
+
 .markdown-reader-media-trigger:focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
@@ -161,12 +180,47 @@
   overflow: hidden;
 }
 
+.markdown-reader-media-header {
+  display: flex;
+  min-height: 36px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: flex-end;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--editor-surface) 92%, var(--background));
+  padding-inline: 10px;
+}
+
 .markdown-reader-media-surface {
   min-width: 0;
   min-height: 0;
   flex: 1;
   overflow: auto;
   background: var(--editor-surface);
+}
+
+.markdown-reader-media-surface[data-media-kind='diagram'] {
+  cursor: grab;
+}
+
+.markdown-reader-media-surface[data-panning='true'] {
+  cursor: grabbing;
+}
+
+.markdown-reader-media-surface[data-panning='true'] * {
+  user-select: none;
+}
+
+.markdown-reader-media-controls {
+  display: flex;
+  min-height: 40px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-top: 1px solid var(--border);
+  background: color-mix(in srgb, var(--editor-surface) 92%, var(--background));
+  padding-inline: 10px;
 }
 
 .markdown-reader-media-canvas {
@@ -205,6 +259,10 @@
   height: 100%;
   max-width: none;
   max-height: none;
+}
+
+.markdown-reader-media-svg.is-sized svg {
+  max-width: none !important;
 }
 
 .markdown-preview:focus-visible {
@@ -518,9 +576,17 @@
 .markdown-annotation-list-block {
   position: relative;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: 0;
+  align-items: start;
+}
+
+.markdown-annotation-block.has-review-notes,
+.markdown-annotation-list-block.has-review-notes,
+.markdown-annotation-block:has(.markdown-annotation-composer),
+.markdown-annotation-list-block:has(.markdown-annotation-composer) {
   grid-template-columns: minmax(0, 1fr) minmax(220px, min(28cqw, 300px));
   column-gap: 32px;
-  align-items: start;
 }
 
 .markdown-annotation-block > :not(.markdown-annotation-controls),
@@ -553,10 +619,22 @@
   margin-top: 0;
 }
 
+.markdown-annotation-block:not(.has-review-notes):not(:has(.markdown-annotation-composer))
+  > .markdown-annotation-controls,
+.markdown-annotation-list-block:not(.has-review-notes):not(:has(.markdown-annotation-composer))
+  > .markdown-annotation-controls {
+  position: absolute;
+  top: 0;
+  inset-inline-start: calc(100% + 32px);
+  width: 0;
+  grid-column: 1;
+  grid-row: 1;
+}
+
 .markdown-annotation-add {
   position: absolute;
   top: 2px;
-  left: -26px;
+  inset-inline-start: -26px;
   display: inline-flex;
   width: 20px;
   height: 20px;
@@ -648,6 +726,10 @@
   }
 
   .markdown-annotation-controls {
+    position: static;
+    width: auto;
+    grid-column: auto;
+    grid-row: auto;
     margin-top: 6px;
   }
 
@@ -849,6 +931,11 @@
   border-radius: 0;
 }
 
+.markdown-light .markdown-body pre code,
+.markdown-dark .markdown-body pre code {
+  background: transparent;
+}
+
 /* Code copy button — appears on hover over code blocks in preview mode */
 .code-block-wrapper {
   position: relative;
@@ -1040,12 +1127,8 @@
   background: rgba(0, 0, 0, 0.04);
 }
 
-.markdown-dark .markdown-body tr:nth-child(even) td {
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.markdown-light .markdown-body tr:nth-child(even) td {
-  background: rgba(0, 0, 0, 0.015);
+.markdown-body tbody tr:nth-child(even) td {
+  background: color-mix(in srgb, currentColor 4%, transparent);
 }
 
 .markdown-body hr {
