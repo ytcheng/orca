@@ -94,6 +94,7 @@ export function MarkdownPreviewSurface({
             tocVisible={showTableOfContents}
             onToggleToc={onToggleTableOfContents ?? noopToggleTableOfContents}
             onOpenFind={() => foundation.setIsSearchOpen(true)}
+            reviewToolbar={reviewToolbar}
           />
           <div
             ref={viewport.setRootRef}
@@ -102,7 +103,6 @@ export function MarkdownPreviewSurface({
             className={`markdown-reader-scroll scrollbar-editor ${themeClassName}`}
           >
             {searchBar}
-            {reviewToolbar}
             <article className="markdown-reader-article">
               {/* Why: OS page translation can replace react-owned text nodes and crash reconciliation. */}
               <div ref={bodyRef} className="markdown-body" translate="no">

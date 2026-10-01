@@ -8,12 +8,14 @@ export type MarkdownReaderToolbarProps = {
   tocVisible: boolean
   onToggleToc: () => void
   onOpenFind: () => void
+  reviewToolbar?: React.ReactNode
 }
 
 export function MarkdownReaderToolbar({
   tocVisible,
   onToggleToc,
-  onOpenFind
+  onOpenFind,
+  reviewToolbar
 }: MarkdownReaderToolbarProps): React.JSX.Element {
   const tocLabel = tocVisible
     ? translate('auto.components.editor.MarkdownReaderToolbar.hideToc', 'Hide table of contents')
@@ -30,6 +32,7 @@ export function MarkdownReaderToolbar({
   return (
     <TooltipProvider delayDuration={300}>
       <div className="markdown-reader-toolbar" role="toolbar" aria-label={toolbarLabel}>
+        {reviewToolbar}
         <Tooltip>
           <TooltipTrigger asChild>
             <Button

@@ -60,7 +60,7 @@
   width: min(100%, 1200px);
   min-width: 0;
   margin-inline: auto;
-  padding: 32px clamp(28px, 4vw, 56px) 64px;
+  padding: 16px clamp(28px, 4vw, 56px) 64px;
 }
 
 @container (max-width: 760px) {
@@ -512,6 +512,10 @@
   border-radius: 6px;
   background: color-mix(in srgb, var(--background) 94%, var(--editor-surface));
   box-shadow: 0 1px 2px color-mix(in srgb, var(--foreground) 12%, transparent);
+}
+
+.markdown-reader-toolbar .markdown-review-toolbar {
+  margin-bottom: 0;
 }
 
 .markdown-review-toolbar-button,
